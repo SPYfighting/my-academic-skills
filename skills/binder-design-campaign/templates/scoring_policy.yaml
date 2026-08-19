@@ -1,0 +1,91 @@
+# Scoring policy — the ranking formula, written once.
+#
+# Pre-registered at G3, frozen before the first production scoring job, and
+# recorded in the campaign log. references/scoring-instrument.md explains why
+# each field is what it is; this file is what the sheet writer and the checks
+# actually read, so a change here is the only way to change the ranking.
+#
+# Changing any field after production scoring begins re-opens G3 and
+# invalidates every score computed under the old values.
+
+policy_id: default_3arm_4to1
+frozen_at_utc:            # from an executed clock call, at G3 PASS
+source: >-
+  Ranking on ipSAE_min follows Overath et al. 2025
+  (doi:10.1101/2025.08.14.670059), which found it the best single in silico
+  predictor of binding across 3,766 experimentally characterised binders.
+  The pose term and the 4:1 weighting come from the source campaign prompt.
+
+# --- Arms -------------------------------------------------------------------
+# Names are campaign-local. Every per-arm sheet column is generated from this
+# list, so renaming an arm here renames its columns. At least two arms of
+# different lineage; a single-arm instrument is a disclosed limitation.
+arms:
+  - name: ef2full
+    model: ESMFold2-Full
+    lineage: esm
+    msa: target_chains
+  - name: ef2fast
+    model: ESMFold2-Fast
+    lineage: esm
+    msa: none            # released checkpoint has no MSA encoder
+  - name: ptxv2
+    model: Protenix-v2
+    lineage: protenix
+    msa: target_chains
+
+substitutes: {}          # arm_name -> what stood in for it, and why
+
+# --- Terms ------------------------------------------------------------------
+# One entry per raw term. weight applies to that term's per-target z-score in
+# rank_zscore; final_score is the unweighted mean of the same raw terms.
+terms:
+  - metric: ipsae_min
+    per_arm: true
+    seed_aggregation: max
+    weight: 4
+  - metric: sc_dockq
+    per_arm: true
+    seed_aggregation: argmax_ipsae_min_seed   # same seed as that arm's ipSAE
+    weight: 1
+
+# Added automatically on counter-screened targets, one per arm:
+#   selectivity_delta = ipsae_min(on-target) - ipsae_min(off-target paralog)
+# computed at the same seed count and aggregation as the on-target term.
+counter_screen:
+  enabled: false
+  off_target:                     # accession
+  term_weight: 4
+
+# --- Summary scores ---------------------------------------------------------
+final_score:
+  definition: unweighted mean of all realised raw terms
+  reported_as: headline
+rank_zscore:
+  definition: per-target weighted mean of the z-scores of the same terms
+  used_for: ranking only
+  note: >-
+    z-scores are transductive: comparable only within the pool that produced
+    them, never across targets, waves or campaigns.
+
+# --- Seed tiers -------------------------------------------------------------
+seed_tiers:
+  screen: 1
+  intermediate: 5        # 3 under the explore preset
+  final: 5               # 3 under the explore preset
+distinct_seeds_required: true
+
+# --- Rank ordering ----------------------------------------------------------
+# The only rank-assignment path. Also encoded in sheet_schema.json.
+rank_order_key:
+  - n_seeds_at_final_tier_on_all_arms: desc
+  - pose_PASS: desc
+  - rank_zscore: desc
+
+# --- Deviations from the default -------------------------------------------
+# An alternative policy is allowed only with G3 evidence that it separates
+# controls substantially better. Record that evidence here.
+preregistered_alternative:
+  used: false
+  rationale:
+  control_separation_evidence:

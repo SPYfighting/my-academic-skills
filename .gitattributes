@@ -1,0 +1,8 @@
+# The scripts run on Linux clusters. Keep LF in the repository and in the
+# checkout, so a CRLF line ending never reaches a shebang or a heredoc there.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.pdf binary
+*.tar.gz binary

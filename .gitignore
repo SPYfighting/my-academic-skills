@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Campaign state and outputs at the repository root - never commit these.
+# Paths are anchored so the bundled fixture under examples/ is still tracked
+# (git does not descend into an excluded directory, so an unanchored "state/"
+# would hide examples/minimal/state/ and no negation could bring it back).
+/state/
+/ledger/
+/out/
+/deliverables/
+/campaigns/
+
+# Large scientific artifacts, wherever they appear
+*.pdb
+*.cif
+*.mmcif
+*.parquet
+*.a3m
+*.tar.gz
+*.npz
+
+# Editor and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp

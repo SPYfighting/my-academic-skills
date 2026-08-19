@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+title: my-academic-skills
+authors:
+  - family-names: Han
+    given-names: Y.
+    alias: SPYfighting
+message: >-
+  If you use this skill, please cite it and, more importantly, cite the
+  Anthropic release it adapts and every scientific method your campaign used.
+type: software
+abstract: >-
+  A collection of agent skills for research work. Its first skill,
+  binder-design-campaign, is a gated human-in-the-loop protocol for
+  computational protein campaigns: de novo miniprotein binder design, structure
+  and complex prediction, and protein engineering. Adapted from Anthropic's
+  publicly released autonomous binder design protocol prompt, with the autonomy
+  clause inverted into seven human review gates and the internal orchestration
+  replaced by a portable compute backend contract.
+license: MIT
+version: 0.3.0
+date-released: '2026-08-19'
+keywords:
+  - protein design
+  - binder design
+  - de novo design
+  - structure prediction
+  - agent skill
+  - reproducibility
+references:
+  - type: data
+    title: Claude protein binder design (data release v1.0)
+    authors:
+      - name: Anthropic
+    url: https://huggingface.co/datasets/Anthropic/claude-protein-binder-design
+    license: CC-BY-4.0
+  - type: report
+    title: Autonomous de novo protein binder design with Claude
+    authors:
+      - name: Claude Science
+      - family-names: Shanehsazzadeh
+        given-names: Amir
+    year: 2026
+    url: https://www-cdn.anthropic.com/30bf50e22a01388bb29bf077ee3f244531594b7a.pdf

@@ -1,0 +1,10 @@
+{
+  "target": "PD-L1",
+  "status": "PASS",
+  "frozen_at_utc": "2026-08-19T06:23:13+00:00",
+  "instrument_mask": [
+    "ef2full",
+    "ef2fast",
+    "ptxv2"
+  ]
+}

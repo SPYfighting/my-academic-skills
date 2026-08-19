@@ -1,0 +1,116 @@
+# Campaign configuration — filled at G0, frozen afterwards.
+# Every field is either filled or explicitly "unresolved" with a note.
+# Identifiers here must be fetched, never recalled.
+
+campaign:
+  id:                 # campaign-unique, used as a prefix on every path and job name
+  workflow:           # binder-design | structure-prediction | protein-design-general
+  created_utc:        # from an executed clock call
+  operator:           # who signs off at the gates
+
+# --- The scientific question ------------------------------------------------
+# Filled first, at G0, before anything else. An in silico metric is never the
+# objective: it is the proxy the campaign optimises because the endpoint cannot
+# be measured until the designs exist. Keep the two apart here and every
+# downstream claim stays honest.
+brief:
+  question:           # the biology, in one sentence
+  endpoint:           # what the experiment will actually measure, and how
+                      # e.g. "SPR K_D against human PD-L1 ECD, and no response
+                      #       on the mouse ortholog at 1 uM"
+  proxy_metrics:      # what the campaign can compute; NEVER the objective
+                      # e.g. [ipSAE_min, sc_DockQ, cross-arm agreement]
+  success:            # what would make this campaign worth having run
+  failure:            # what would make it a failure - state it before starting,
+                      # so the answer is not written after seeing the data
+  hard_constraints:   # inviolable: length, format, expression host, residues
+                      # that must not change, immunogenicity limits
+  soft_objectives:    # optimise where it does not cost a hard constraint
+  key_assumptions:    # biology taken on trust; each becomes a G1 dossier field
+  unresolved:         # what could not be settled, and why it matters
+
+positive_objectives:  # what the design must do
+  # - bind_target_A_at_the_chosen_epitope
+  # - retain_activity_at_60C
+
+negative_objectives:  # what it must NOT do - as first-class as the positives
+  # - do_not_bind_paralog_B
+  # - do_not_self-associate
+  # - do_not_expose_an_aggregation-prone_surface
+  # Each entry that can be scored gets a counter-screen in scoring_policy.yaml;
+  # each that cannot is checked at G5 by inspection and said so.
+
+scale:
+  preset:             # explore | standard | full
+  designs_per_target: 30          # rows in the shipped sheet
+  generate_per_target:            # in silico designs generated
+  screen_seeds: 1
+  final_seeds: 5                  # 3 under explore
+  optimisation_rounds_min: 2
+  optimisation_rounds_hard: 5
+
+targets:
+  - name:
+    uniprot:                      # as fetched; or "none" with the sequence source
+    organism:
+    taxid:
+    expected_oligomeric_state:
+    counter_target:               # accession, or null
+    assay_construct_known:        # true | false (false means provisional scoring construct)
+    notes:
+
+compute:
+  backend:            # slurm | local | cloud
+  slurm:
+    partition:
+    gpu_type:
+    max_gpus_concurrent:
+    walltime_cap_s:
+    account:
+    scratch_dir:
+    shared_state_dir:
+  local:
+    n_gpus:
+  cloud:
+    provider:
+    budget_usd:
+    budget_is_ceiling:            # true = never exceed; false = target to spend
+    concurrency_ceiling:
+
+storage:
+  root:                           # campaign root; everything lives under it
+  quota_gb:
+  estimated_need_gb:              # show the arithmetic in the G0 plan
+
+licensing:
+  regime:             # commercial | academic-noncommercial
+  # commercial excludes PyRosetta, AF3 weights, ESM3 and anything similar.
+  # academic-noncommercial re-admits several of them — confirm each licence.
+
+instrument:
+  ranking_arms: []                # frozen at G3
+  substitutes: {}                 # arm -> what stood in for it
+  ranking_formula: default_4to1   # or a pre-registered alternative
+  pose_dockq_threshold: 0.23
+  monomer_plddt_threshold: 0.70
+  monomer_plddt_scale: "0-1"
+
+novelty:
+  database:                       # path to the full UniRef90 index
+  binder_corpus:                  # path to the known-binder corpus
+  identity_max: 0.60
+  coverage_max: 0.50
+  local_identity_max: 0.30
+  local_aligned_residues_min: 40
+  tmscore_max: 0.50
+
+deliverables:
+  destination:                    # where the final artifacts go
+  ordered_by:                     # in-house | CRO name | computational only
+  report_required: true
+
+existing_assets:
+  structures: []
+  prior_designs: []
+  assay_data: []
+  preferred_epitope:              # if the user already has one in mind

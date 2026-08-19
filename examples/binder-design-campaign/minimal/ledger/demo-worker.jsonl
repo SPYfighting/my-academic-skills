@@ -1,0 +1,4 @@
+{"ts_utc": "2026-08-19T06:23:13+00:00", "job_id": "EGFR-gen_screen", "target": "EGFR", "stage": "gen_screen", "structure_method": "rfdiffusion", "n_generated": 400, "n_scored": 400, "gpu_seconds": 7200.0, "writer_id": "demo-worker"}
+{"ts_utc": "2026-08-19T06:23:13+00:00", "job_id": "EGFR-final", "target": "EGFR", "stage": "final", "structure_method": "rfdiffusion", "n_generated": 0, "n_scored": 24, "gpu_seconds": 7200.0, "writer_id": "demo-worker"}
+{"ts_utc": "2026-08-19T06:23:13+00:00", "job_id": "PD-L1-gen_screen", "target": "PD-L1", "stage": "gen_screen", "structure_method": "rfdiffusion", "n_generated": 400, "n_scored": 400, "gpu_seconds": 7200.0, "writer_id": "demo-worker"}
+{"ts_utc": "2026-08-19T06:23:13+00:00", "job_id": "PD-L1-final", "target": "PD-L1", "stage": "final", "structure_method": "rfdiffusion", "n_generated": 0, "n_scored": 24, "gpu_seconds": 7200.0, "writer_id": "demo-worker"}

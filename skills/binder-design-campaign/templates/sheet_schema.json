@@ -1,0 +1,144 @@
+{
+  "schema_version": "1.0",
+  "_comment": "Frozen at campaign kickoff. Edit ranking_arms, enums and thresholds to match the campaign, then do not change it again. scripts/check_design_sheet.py and scripts/check_diversity.py read this file.",
+
+  "designs_per_target": 30,
+  "final_seed_tier": 5,
+  "ranking_arms": ["ef2full", "ef2fast", "ptxv2"],
+
+  "columns": [
+    {"name": "design_id",                "dtype": "str",   "unique": true},
+    {"name": "target",                   "dtype": "str"},
+    {"name": "sequence",                 "dtype": "str",   "regex": "^[ACDEFGHIKLMNPQRSTVWY]+$"},
+    {"name": "binder_len",               "dtype": "int",   "min": 20, "max": 300},
+    {"name": "rank",                     "dtype": "int",   "min": 1},
+    {"name": "rank_zscore",              "dtype": "float"},
+    {"name": "final_score",              "dtype": "float"},
+    {"name": "score_instrument",         "dtype": "str"},
+    {"name": "pose_PASS",                "dtype": "bool"},
+    {"name": "pose_dockq",               "dtype": "float", "min": 0.0, "max": 1.0},
+    {"name": "n_seeds",                  "dtype": "int",   "min": 1},
+    {"name": "structure_method",         "dtype": "enum",  "enum": "structure_method"},
+    {"name": "seq_method",               "dtype": "enum",  "enum": "seq_method"},
+    {"name": "opt_round",                "dtype": "int",   "min": 0},
+    {"name": "root_backbone_id",         "dtype": "str"},
+    {"name": "parent_design_id",         "dtype": "str",   "nullable": true},
+    {"name": "novelty_verdict_path",     "dtype": "str"},
+    {"name": "tm90_cluster_id",          "dtype": "str"},
+    {"name": "fold_class",               "dtype": "enum",  "enum": "fold_class"},
+    {"name": "relaxation_step",          "dtype": "enum",  "enum": "relaxation_step", "nullable": true},
+    {"name": "missing_metrics",          "dtype": "str",   "nullable": true,
+     "_comment": "Semicolon-separated metric=REASON pairs explaining every NaN on this row; empty when nothing is missing. REASON is from the missing_reason enum."},
+    {"name": "designed_structure_path",  "dtype": "path"},
+
+    {"name": "predicted_structure_path_ef2full", "dtype": "path",  "nullable": true, "per_arm": true},
+    {"name": "predicted_structure_path_ef2fast", "dtype": "path",  "nullable": true, "per_arm": true},
+    {"name": "predicted_structure_path_ptxv2",   "dtype": "path",  "nullable": true, "per_arm": true},
+
+    {"name": "ipsae_ef2full",            "dtype": "float", "nullable": true, "score": true},
+    {"name": "ipsae_ef2fast",            "dtype": "float", "nullable": true, "score": true},
+    {"name": "ipsae_ptxv2",              "dtype": "float", "nullable": true, "score": true},
+    {"name": "sc_dockq_ef2full",         "dtype": "float", "nullable": true, "score": true, "min": 0.0, "max": 1.0},
+    {"name": "sc_dockq_ef2fast",         "dtype": "float", "nullable": true, "score": true, "min": 0.0, "max": 1.0},
+    {"name": "sc_dockq_ptxv2",           "dtype": "float", "nullable": true, "score": true, "min": 0.0, "max": 1.0},
+
+    {"name": "monomer_plddt",            "dtype": "float", "nullable": true, "score": true},
+    {"name": "lcp_score",                "dtype": "float", "nullable": true, "score": true},
+    {"name": "esmc_ll",                  "dtype": "float", "nullable": true, "score": true},
+
+    {"name": "n_seeds_ef2full",          "dtype": "int",   "nullable": true},
+    {"name": "n_seeds_ef2fast",          "dtype": "int",   "nullable": true},
+    {"name": "n_seeds_ptxv2",            "dtype": "int",   "nullable": true}
+  ],
+
+  "counter_screen_columns": [
+    {"name": "ipsae_offtarget_ef2full",    "dtype": "float", "score": true},
+    {"name": "ipsae_offtarget_ef2fast",    "dtype": "float", "score": true},
+    {"name": "ipsae_offtarget_ptxv2",      "dtype": "float", "score": true},
+    {"name": "selectivity_delta_ef2full",  "dtype": "float", "score": true},
+    {"name": "selectivity_delta_ef2fast",  "dtype": "float", "score": true},
+    {"name": "selectivity_delta_ptxv2",    "dtype": "float", "score": true}
+  ],
+
+  "oligomeric_target_columns": [
+    {"name": "ipsae_NN_ef2full",         "dtype": "float", "score": true},
+    {"name": "sc_dockq_NN_ef2full",      "dtype": "float", "score": true},
+    {"name": "binder_binder_clashes_NN", "dtype": "int"}
+  ],
+
+  "enums": {
+    "fold_class": ["all_alpha", "not_all_alpha"],
+    "relaxation_step": ["", "DIVERSITY_CAPS", "LIABILITY", "NOVELTY_LAST_RESORT"],
+    "missing_reason": ["NOT_RUN", "FAILED", "UNSUPPORTED", "CONSTRUCT_FAIL"],
+    "structure_method": [
+      "rfdiffusion", "rfdiffusion3", "bindcraft", "freebindcraft", "boltzgen",
+      "pxdesign", "proteina_complexa", "genie3", "mosaic", "foldcraft",
+      "boltzdesign1", "halludesign", "protein_hunter"
+    ],
+    "seq_method": [
+      "proteinmpnn", "solublempnn", "caliby", "solublecaliby", "ligandmpnn",
+      "codesign_native"
+    ]
+  },
+
+  "mandatory_nonnull": [
+    "design_id", "target", "sequence", "binder_len",
+    "rank", "rank_zscore", "final_score", "score_instrument",
+    "pose_PASS", "pose_dockq", "n_seeds",
+    "structure_method", "root_backbone_id",
+    "tm90_cluster_id", "fold_class", "designed_structure_path"
+  ],
+
+  "downgrade_if_null": ["seq_method", "predicted_structure_path_*", "novelty_verdict_path"],
+
+  "missing_metrics_check": {
+    "_comment": "Every NaN in a score column carries a reason, and every reason names a real NaN. Losing the distinction between NOT_RUN and UNSUPPORTED loses the diagnosis.",
+    "severity": "error",
+    "column": "missing_metrics",
+    "enum": "missing_reason"
+  },
+
+  "sentinel_check": {
+    "severity": "warn",
+    "applies_to": "score",
+    "values": [0.0, -1, -999],
+    "note": "An exact sentinel in a score column is usually a missing value written wrongly. Confirm each hit is a real measurement."
+  },
+
+  "rank_order_key": [
+    {"expr": "n_seeds >= final_seed_tier", "direction": "desc"},
+    {"expr": "pose_PASS",                  "direction": "desc"},
+    {"expr": "rank_zscore",                "direction": "desc"}
+  ],
+
+  "selection_caps": {
+    "reject_exact_duplicate_sequence": true,
+    "min_levenshtein_between_rows": 6,
+    "max_share_per_root_backbone": 0.05,
+    "max_share_per_tm90_cluster": 0.10,
+    "max_share_per_structure_method": 0.50,
+    "min_distinct_structure_methods": 3,
+    "max_share_per_seq_method": 0.6667
+  },
+
+  "relaxed_caps_floor": {
+    "_comment": "Diversity relaxation may never go past these.",
+    "max_share_per_root_backbone": 0.25,
+    "max_share_per_structure_method": 0.50,
+    "min_distinct_structure_methods": 3
+  },
+
+  "diversity_targets": {
+    "_comment": "Reported target, not a ranking gate. Ship fewer and state the reason if the pool cannot supply it.",
+    "min_share_not_all_alpha": 0.10
+  },
+
+  "absolute_floors": {
+    "_comment": "Never relaxed, under any circumstance.",
+    "no_identical_shipped_rows": true,
+    "no_target_mimic_binder_chain": true,
+    "no_natural_sequence_copy": true,
+    "pose_dockq_nonnull": true,
+    "final_score_nonnull": true
+  }
+}

@@ -1,0 +1,114 @@
+# Changelog
+
+All notable changes to this project are recorded here.
+Format follows Keep a Changelog; versioning is semantic.
+
+## [0.3.0] - 2026-08-19
+
+Response to an external design review. The theme: add what the model will not
+do reliably under pressure, put it where it costs nothing at runtime, and cut
+what the model already does by default.
+
+### Added
+- **Campaign brief at G0** (`templates/campaign_config.yaml`, `brief:`): the
+  experimental endpoint, success and failure criteria stated before any
+  compute, and `negative_objectives` as a first-class list. G0 now asks what
+  the experiment measures before it asks how many designs to make.
+- **Campaign failure vocabulary** (21 codes, `scripts/ledger.py`), shared by
+  deviations and rejections and enforced by argparse.
+- **Reject ledger** (`ledger.py reject` / `rejects`): one row per design
+  filtered out before scoring, so "why was this discarded" and "where is this
+  campaign failing" are aggregations.
+- **Distinguishable missing-value semantics**: a `missing_metrics` column
+  pairing every NaN with `NOT_RUN`, `FAILED`, `UNSUPPORTED` or
+  `CONSTRUCT_FAIL`, checked both ways by `check_design_sheet.py`.
+- `templates/scoring_policy.yaml`: the ranking formula as a file the checks
+  read, frozen at G3, replacing the same formula restated in three documents.
+- **Perturbation control** at G3 (hotspot-deleted positive control), which
+  tests whether an arm scores the specified epitope.
+- **Selection portfolio** at G5: exploit / explore / cross-arm disagreement,
+  replacing an unexamined top-N.
+- **Mid-run approval triggers** in `SKILL.md`: changing the construct, a
+  load-bearing residue, the off-target definition or the endpoint returns to
+  its gate rather than being logged as a deviation.
+- Roster fields `capability`, `supported_inputs`, `unsupported_inputs`,
+  `license`, `adapter_version` - a record of what this campaign measured, not a
+  maintained catalogue, and explicitly not a routing layer.
+- Enzyme and catalysis dossier fields in `workflows/protein-design-general.md`.
+- `predicted` / `inferred` / `measured` labelling in `templates/report_outline.md`.
+- Early stop, successive halving and diminishing-returns stopping rules.
+
+### Changed
+- `check_design_sheet.py` derives per-arm columns from the schema's
+  `ranking_arms` instead of a hardcoded arm list, so a campaign that renamed or
+  substituted an arm is checked against its own instrument.
+- Cross-arm agreement is described as the strongest evidence *within its
+  class*, explicitly not independent validation.
+- The method floor logs a zero-contribution method with **which** happened -
+  eliminated by data, or blocked by an engineering problem - instead of calling
+  both a defect.
+- Budget guidance drops the spend-to-target framing; the objective is
+  information per unit cost.
+- `check.py` covers the reject ledger and both directions of the
+  missing-metrics check; the fixture carries reject rows.
+
+### Removed
+- Byte-splitting guidance for oversized archives, an artefact of the source
+  campaign's upload connector.
+- The six assay-outcome codes from the failure vocabulary (expression,
+  solubility, binding, specificity, activity, assay ambiguity). The protocol
+  ends at the design sheet and can never write them; a code that cannot occur
+  is noise in an enum built for aggregation. Fifteen codes remain, all of them
+  observable by the campaign itself.
+
+### Scope
+- **The protocol ends at the design sheet.** Analysing returned assay data is a
+  different task and does not run under these gates. Earlier experimental
+  results enter as operator input at G0, one-way, in the operator's own words -
+  used to choose an epitope, a difficulty prior and a negative objective, never
+  analysed or claimed as this campaign's evidence. Rationale in
+  `docs/binder-design-campaign/design-rationale.md` §5.
+
+## [0.2.0] - 2026-08-19
+
+### Changed
+- Repository restructured as a skill collection, `my-academic-skills`; per-skill
+  docs moved to `docs/<skill>/` and fixtures to `examples/<skill>/`.
+- `SKILL.md` rewritten against the `writing-for-agents` discipline: 261 to 148
+  lines, description 754 to 590 characters, scale presets moved into the G0
+  checklist, and the repeated scoring caveat collapsed into one leading phrase
+  (*a filter, never an oracle*) defined once in `failure-modes.md` §1.
+- Verification commands, previously duplicated across four documents, replaced
+  by `check.py`, which also asserts `preflight.py` stands down when it should -
+  the earlier check only read its exit code, which is 0 on both paths.
+
+### Added
+- `references/thresholds.md`: absolute cutoffs, campaign sizing, pass-rate
+  diagnostic bands, failure tree, and per-method cost, adapted from Adaptyv
+  Bio's public skills and the Overath et al. 2025 meta-analysis.
+- `references/tool-catalog.md` §2.1: head-to-head hit rates and starting-point
+  guidance, with the target-dependence caveat.
+- ESMFold2 bring-up gotchas in `references/tool-catalog.md` §4.
+- Bilingual README (`README.md`, `README.zh-CN.md`).
+
+## [0.1.0] - 2026-08-19
+
+First release.
+
+### Added
+- `skills/binder-design-campaign/` - the gated campaign protocol, adapted from
+  Anthropic's CC-BY-4.0 autonomous binder design prompt and technical report.
+- Seven review gates (G0-G6) with per-gate presentation checklists.
+- Three workflows: de novo binder design, structure and complex prediction,
+  general protein design.
+- Seven reference documents: scoring instrument, validation gates, tool
+  catalogue, target dossier guide, failure modes, deliverables specification,
+  compute backends.
+- Compute backend contract with Slurm, local and metered-cloud adapters.
+- Five standard-library scripts: design sheet validation, diversity caps,
+  ledger, scoreboard derivation, in-job preflight dead-man switch.
+- Templates: campaign config, target dossier, frozen sheet schema, report
+  outline.
+- `examples/binder-design-campaign/minimal/` fixture, exercised by every script on clean and corrupted
+  input.
+- Documentation: installation, design rationale, source mapping.
