@@ -1,5 +1,9 @@
 # my-academic-skills
 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
+[![Agents](https://img.shields.io/badge/agents-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20opencode-6c5ce7.svg)](docs/installation.md)
+
 科研用的 agent skill 集合。每个一级子目录是一个可独立安装、修改和验证的 skill，只用通用的 `SKILL.md`、`references/`、`templates/`、`scripts/`，不依赖任何平台专有机制。
 
 可用于 Claude Code、Codex、opencode，以及任何读 `SKILL.md` 或 `AGENTS.md` 的 agent。除了跑检查脚本要用的 Python 3.8 以上，没有别的依赖。

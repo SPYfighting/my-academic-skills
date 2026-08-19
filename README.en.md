@@ -1,5 +1,9 @@
 # my-academic-skills
 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
+[![Agents](https://img.shields.io/badge/agents-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20opencode-6c5ce7.svg)](docs/installation.md)
+
 Agent skills for research work. Each top-level directory is one skill that can
 be installed, edited and verified on its own, using only the portable
 `SKILL.md`, `references/`, `templates/` and `scripts/` layout with no
