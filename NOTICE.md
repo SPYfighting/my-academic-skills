@@ -7,7 +7,7 @@ endorsed by, or reviewed by any of the projects named below.
 
 ## Primary source
 
-The protocol in `skills/binder-design-campaign/` is adapted from the campaign
+The protocol in `binder-design-campaign/` is adapted from the campaign
 prompt and technical report that Anthropic released with its autonomous binder
 design work.
 
@@ -33,7 +33,7 @@ CC-BY-4.0 permits adaptation with attribution, which this file provides.
 
 ### What was taken, and what was not
 
-Paths below are relative to `skills/binder-design-campaign/`.
+Paths below are relative to `binder-design-campaign/`.
 
 **Adapted from the source prompt**: the scoring-instrument design (multi-arm
 co-folding, ipSAE_min with union masking, sc_DockQ pose self-consistency, the

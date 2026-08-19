@@ -17,7 +17,7 @@ abstract: >-
   clause inverted into seven human review gates and the internal orchestration
   replaced by a portable compute backend contract.
 license: MIT
-version: 0.3.0
+version: 0.4.0
 date-released: '2026-08-19'
 keywords:
   - protein design

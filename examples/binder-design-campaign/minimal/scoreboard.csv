@@ -1,3 +1,0 @@
-target,designs_generated,designs_screened,designs_ranked,best_final_score,median_final_score_ranked,pose_check_pass_rate_top10,gpu_hours,wallclock_hours_active_compute,n_distinct_root_backbones,max_seqs_per_root_backbone,n_tm90_clusters,max_tm90_cluster_size,n_structure_methods,top_method_share,min_pairwise_editdist,n_non_all_alpha
-EGFR,400,400,24,0.575583,0.485283,1.0,4.0,4.0,6,1,6,1,3,0.5,48,1
-PD-L1,400,400,24,0.57185,0.488491,1.0,4.0,4.0,6,1,6,1,3,0.5,50,1

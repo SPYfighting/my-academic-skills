@@ -77,7 +77,7 @@ ideas for anyone billing per second. A site with LSF, PBS or Kubernetes writes
 one adapter and changes nothing above it.
 
 One piece of the cloud machinery was worth keeping everywhere:
-`skills/binder-design-campaign/scripts/preflight.py`, the in-job dead-man switch. It costs under a second at
+`binder-design-campaign/scripts/preflight.py`, the in-job dead-man switch. It costs under a second at
 job start and is the only control that still binds when every orchestrating
 process is dead — which, on a queue with a day of pending jobs, is a situation
 that actually happens.

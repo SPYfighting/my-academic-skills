@@ -1,7 +1,7 @@
 # AGENTS.md
 
-Routes agents to the skills in this repository, and states the rules for
-changing them.
+Routes agents to the skills here, and states the conventions for changing this
+repository.
 
 ---
 
@@ -9,16 +9,16 @@ changing them.
 
 | Ask | Read in full, then follow it |
 |---|---|
-| protein binders, miniproteins, epitope or hotspot choice, design campaigns | `skills/binder-design-campaign/SKILL.md`, then its `workflows/binder-design.md` |
+| protein binders, miniproteins, epitope or hotspot choice, design campaigns | `binder-design-campaign/SKILL.md`, then its `workflows/binder-design.md` |
 | structure or complex prediction, confidence assessment | same `SKILL.md`, then `workflows/structure-prediction.md` |
 | protein stability, enzyme, interface or scaffold redesign | same `SKILL.md`, then `workflows/protein-design-general.md` |
 
 Two properties of that protocol matter more than the rest:
 
 - **A gate is a hard stop.** Present what
-  `skills/binder-design-campaign/checklists/gate-checklists.md` lists for the
-  gate, then wait for the human. Keep the presentation and the next action in
-  separate messages.
+  `binder-design-campaign/checklists/gate-checklists.md` lists for the gate,
+  then wait for the human. Keep the presentation and the next action in separate
+  messages.
 - **State only what you computed, and fetch every external identifier.**
   Accessions, PDB IDs, residue ranges and DOIs are the literal output of a
   lookup executed in the same session that wrote them.
@@ -28,28 +28,58 @@ To install a skill into another project instead of reading it here, see
 
 ---
 
-## Changing this repository
+## Repository layout
 
-### What it is
-
-A collection of agent skills. The deliverable is prose another agent reads and
-acts on, plus standard-library Python checks. No build step, no runtime
-dependency.
+One skill per top-level directory. Nothing else at the root except repository
+documents and `check.py`.
 
 ```
-skills/<skill-name>/
+<skill-name>/
   SKILL.md          the protocol; keep it under ~200 lines
-  workflows/        one file per branch, stage by stage
-  references/       long-form detail, loaded on demand
-  checklists/       what to present at each gate
-  templates/        starting points the agent copies and fills
-  scripts/          runnable checks, standard library only
-examples/<skill-name>/   fixtures the scripts run against
-docs/                    installation, then per-skill rationale
-check.py                 repository self-check
+  workflows/        one file per branch, stage by stage       (optional)
+  references/       long-form detail, loaded on demand        (optional)
+  checklists/       what to present at each human gate        (optional)
+  templates/        starting points the agent copies and fills (optional)
+  scripts/          runnable checks and helpers, plus selfcheck.py
+  examples/         the fixture selfcheck.py runs against
+  docs/             rationale and provenance, for humans, not loaded at runtime
 ```
 
-### Rules
+`SKILL.md` is the only required file. The rest exist when the skill needs them.
+
+A skill is self-contained: everything it needs travels with the directory, so
+symlinking it into `~/.claude/skills/` is the whole installation.
+
+## Adding a skill
+
+1. Create `<skill-name>/SKILL.md` with `name` and `description` frontmatter.
+   The directory name and the `name` field must match.
+2. Write the mechanical parts as `scripts/`, the on-demand detail as
+   `references/`, and keep `SKILL.md` short.
+3. Add `scripts/selfcheck.py`. `check.py` finds it by convention and will report
+   the skill as unchecked without it. Exercise the scripts on clean fixture data
+   **and** on a deliberately corrupted copy; a check that never fails is broken.
+4. Add one row to the table in `README.md` and in `README.en.md`.
+5. Note it in `CHANGELOG.md`.
+
+No change to `check.py` is needed.
+
+## Version conventions
+
+- Each skill lives in its own top-level directory; changes to one stay inside it.
+- When editing a single skill, stage and commit that directory plus any
+  repository-level document the change actually affects, and nothing else.
+- Semantic versioning on the repository as a whole, recorded in `CHANGELOG.md`
+  and `CITATION.cff`. A new skill is a minor bump; a change to how an existing
+  skill behaves is a minor bump; a fix is a patch.
+- Run `python check.py` before every push. All skills must pass.
+- Credentials, private keys, local backups, campaign state and any material you
+  do not have the right to publish stay out of Git. `.gitignore` covers the
+  usual paths; confirm the rest yourself before pushing.
+- Line endings are LF in the repository and in the checkout (`.gitattributes`).
+  The scripts run on Linux clusters, where CRLF breaks a shebang.
+
+## Writing rules
 
 These follow the `writing-for-agents` discipline; load that skill before any
 substantial edit to a `SKILL.md` or to this file.
@@ -84,20 +114,16 @@ substantial edit to a `SKILL.md` or to this file.
 10. **Tool facts are dated pointers, never authoritative.** The upstream README,
     model card or paper wins, and the prose says so.
 
-### Before committing
+## Before committing
 
 ```bash
 python check.py
 ```
 
-It runs every script against its fixture, then against a corrupted copy, and
-asserts the validators reject the corrupted one and name the problem. Both
-halves must pass: a check that never fails is broken.
+Every skill must pass. If you changed prose in `binder-design-campaign`, update
+the affected row in `binder-design-campaign/docs/source-mapping.md`.
 
-If you changed prose, update the affected row in
-`docs/<skill-name>/source-mapping.md`.
-
-### Attribution
+## Attribution
 
 Content adapted from Anthropic's CC-BY-4.0 release and from MIT-licensed skill
 collections stays attributed in `NOTICE.md`, both there and at its point of use.

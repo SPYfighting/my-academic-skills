@@ -1,6 +1,6 @@
 # Installation
 
-The skill is a plain directory: `skills/binder-design-campaign/`. Installing it
+A skill is a plain directory: `binder-design-campaign/`. Installing it
 means making that directory visible to your agent. Nothing is compiled and
 nothing is installed system-wide.
 
@@ -20,21 +20,21 @@ cd my-academic-skills
 
 ```bash
 mkdir -p ~/.claude/skills
-ln -s "$PWD/skills/binder-design-campaign" ~/.claude/skills/binder-design-campaign
+ln -s "$PWD/binder-design-campaign" ~/.claude/skills/binder-design-campaign
 ```
 
 **Project-level** (this project only, and committable alongside it):
 
 ```bash
 mkdir -p /path/to/project/.claude/skills
-ln -s "$PWD/skills/binder-design-campaign" \
+ln -s "$PWD/binder-design-campaign" \
       /path/to/project/.claude/skills/binder-design-campaign
 ```
 
 Copy instead of symlinking if you prefer to pin a version:
 
 ```bash
-cp -r skills/binder-design-campaign ~/.claude/skills/
+cp -r binder-design-campaign ~/.claude/skills/
 ```
 
 Verify with `/skills` (or ask the agent to list its skills); the entry appears
@@ -47,14 +47,14 @@ Symlinks need Developer Mode or an elevated shell. Copying is simpler:
 ```powershell
 $dest = "$env:USERPROFILE\.claude\skills\binder-design-campaign"
 New-Item -ItemType Directory -Force (Split-Path $dest) | Out-Null
-Copy-Item -Recurse -Force .\skills\binder-design-campaign $dest
+Copy-Item -Recurse -Force .\binder-design-campaign $dest
 ```
 
 Or, with Developer Mode enabled:
 
 ```powershell
 New-Item -ItemType SymbolicLink -Path $dest `
-         -Target (Resolve-Path .\skills\binder-design-campaign)
+         -Target (Resolve-Path .\binder-design-campaign)
 ```
 
 ## opencode
@@ -77,7 +77,7 @@ These runtimes have no skill mechanism, but they read `AGENTS.md`. Two options.
 
 ```bash
 mkdir -p .agent-skills
-cp -r /path/to/my-academic-skills/skills/binder-design-campaign .agent-skills/
+cp -r /path/to/my-academic-skills/binder-design-campaign .agent-skills/
 ```
 
 Then append to your project's `AGENTS.md`:
@@ -99,7 +99,7 @@ git submodule add https://github.com/SPYfighting/my-academic-skills.git .agent-s
 ```
 
 and point the `AGENTS.md` paragraph at
-`.agent-skills/my-academic-skills/skills/binder-design-campaign/SKILL.md`.
+`.agent-skills/my-academic-skills/binder-design-campaign/SKILL.md`.
 
 ## Any other agent
 
@@ -117,8 +117,9 @@ starting work:
 
 > Design binders against PD-L1.
 
-Expected: it opens G0 and asks about targets, backend, scale, licence regime and
-deliverables, rather than proposing a pipeline.
+Expected: it opens G0 and asks what the experiment will measure, what would
+count as success and failure, and what the design must not do, before it says
+anything about pipelines or tools.
 
 Then check the scripts run:
 
@@ -126,7 +127,8 @@ Then check the scripts run:
 python check.py
 ```
 
-All four exit 0 on the bundled fixture.
+Every skill's self-check runs against its bundled fixture, then against a
+corrupted copy. Exit code 0 means all of them behaved as expected.
 
 ---
 
@@ -150,12 +152,13 @@ The skill writes campaign state under a root you choose at G0:
   ledger/
     <writer>.jsonl
     job_metadata/<writer>.jsonl
+    rejects/<writer>.jsonl
     deviations.jsonl
   out/                     job outputs, one directory per job_id
   deliverables/
 ```
 
-`examples/binder-design-campaign/minimal/` is a miniature of this, with two targets and six rows each.
+`binder-design-campaign/examples/` is a miniature of this, with two targets and six rows each.
 Copy its `sheet_schema.json` as a starting point, edit `ranking_arms`,
 `designs_per_target`, `final_seed_tier` and the method enums to match your
 campaign, and freeze it before the first production job.

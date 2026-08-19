@@ -3,6 +3,30 @@
 All notable changes to this project are recorded here.
 Format follows Keep a Changelog; versioning is semantic.
 
+## [0.4.0] - 2026-08-19
+
+Repository layout and documentation. No change to what the protocol does.
+
+### Changed
+- **Skills now live in top-level directories**, matching the layout of the
+  author's other skill repositories: `binder-design-campaign/` rather than
+  `skills/binder-design-campaign/`. Each skill is self-contained, so symlinking
+  the directory is the whole installation. Its fixture and its rationale docs
+  moved inside it.
+- **`README.md` is Chinese** and leads with what the skill is adapted from, what
+  it deliberately does not do, and a flowchart of who decides what at each of the
+  seven gates. English moved to `README.en.md`.
+- **`check.py` discovers skills by convention** and delegates to each one's
+  `scripts/selfcheck.py`, so adding a skill needs no change to it. A skill
+  without a self-check is reported as unchecked rather than passing silently.
+- Repository conventions - layout, how to add a skill, version and commit rules,
+  writing discipline - consolidated into `AGENTS.md`. `CONTRIBUTING.md` points
+  at it instead of restating it.
+
+### Removed
+- `examples/binder-design-campaign/minimal/scoreboard.csv`, a derived artifact
+  the self-check regenerates.
+
 ## [0.3.0] - 2026-08-19
 
 Response to an external design review. The theme: add what the model will not

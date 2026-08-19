@@ -10,8 +10,9 @@ names used below.
 Use this table when you want to check that an adaptation is faithful, or when
 you want to go back to the original wording of a rule.
 
-Paths in the right-hand column are relative to `skills/binder-design-campaign/`;
-paths in the left-hand column are relative to the HuggingFace release.
+Right-hand paths are relative to the skill root, one level above this file
+(so `references/failure-modes.md` means `../references/failure-modes.md`).
+Left-hand paths are relative to the HuggingFace release.
 
 | Source section | Disposition | Where it lives now |
 |---|---|---|
@@ -83,7 +84,7 @@ paths in the left-hand column are relative to the HuggingFace release.
 - The seven-gate model and its checklists.
 - The `explore` and `standard` scale presets.
 - The Slurm and local compute adapters.
-- The runnable checks in `scripts/`, and the fixture in `examples/binder-design-campaign/minimal/`.
+- The runnable checks in `scripts/`, and the fixture in `binder-design-campaign/examples/`.
 - The two generalised workflows (`structure-prediction.md`,
   `protein-design-general.md`).
 - `failure-modes.md` §1, which turns the technical report's post-hoc finding

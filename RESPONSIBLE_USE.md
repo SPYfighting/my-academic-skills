@@ -39,7 +39,7 @@ science and is in scope; the line is drawn at enhancement and at intended harm.
   produced.
 - **Method licences.** Every model this protocol orchestrates carries its own
   licence and its own permitted uses. Confirm each one for your regime; see
-  `skills/binder-design-campaign/references/tool-catalog.md` §5.
+  `binder-design-campaign/references/tool-catalog.md` §5.
 - **Data provenance.** Structures, sequences and datasets carry their own terms.
 
 ## What the skill does

@@ -1,7 +1,7 @@
 # Minimal campaign fixture
 
 A deliberately tiny campaign laid out the way a real one is, so the scripts in
-`skills/binder-design-campaign/scripts/` have something to run against and so
+`binder-design-campaign/scripts/` have something to run against and so
 you can see the file shapes before building your own.
 
 Two targets, six ranked rows each. The sequences are random and the numbers are
@@ -33,7 +33,7 @@ python check.py
 
 That runs every script on this fixture, then on a corrupted copy of it, and
 asserts that the validators reject the corrupted one and say why. A check that
-never fails is broken (`skills/binder-design-campaign/references/failure-modes.md`
+never fails is broken (`binder-design-campaign/references/failure-modes.md`
 §4), so both halves have to pass.
 
 To drive one script by hand, read `check.py` for its arguments.
