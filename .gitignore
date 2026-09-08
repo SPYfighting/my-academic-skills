@@ -4,6 +4,16 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
+.pytest_cache/
+
+# Local working directories and credentials
+/work/
+/reports/
+/dist/
+.env
+.env.*
+*.key
+*.token
 
 # Campaign state and outputs at the repository root - never commit these.
 # Paths are anchored so the bundled fixture under examples/ is still tracked

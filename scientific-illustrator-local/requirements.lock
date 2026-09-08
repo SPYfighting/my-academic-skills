@@ -1,0 +1,8 @@
+# Direct runtime dependencies, pinned to the versions used for local verification.
+# VTracer 1.x is an optional separately pinned executable; it is NOT silently
+# substituted by the older stable PyPI vtracer API.
+Pillow==12.3.0
+numpy==2.3.5
+opencv-python-headless==4.13.0.92
+fonttools==4.63.0
+defusedxml==0.7.1

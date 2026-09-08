@@ -3,6 +3,17 @@
 All notable changes to this project are recorded here.
 Format follows Keep a Changelog; versioning is semantic.
 
+## [0.5.0] - 2026-09-08
+
+### Added
+- `scientific-illustrator-local` 0.2.1: English instructions, local vector reconstruction with live text, Windows/macOS adapters, and a portable self-check. Native drawing has been tested on Windows with Illustrator 27.2.0; other native environments remain unverified.
+
+### Changed
+- Concise bilingual repository indexes and general maintenance/installation guidance, following the structure of `my-skills`.
+- Correct project skill discovery paths for Codex, Claude Code, and OpenCode; dependencies are declared per skill.
+- Protein-design attribution, license, and responsible-use details now travel with that skill. Its scientific workflow is unchanged.
+- Repository checks validate skill entry points and report missing self-checks as failures.
+
 ## [0.4.0] - 2026-08-19
 
 Repository layout and documentation. No change to what the protocol does.

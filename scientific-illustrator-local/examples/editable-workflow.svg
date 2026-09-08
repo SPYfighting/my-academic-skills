@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 320" width="640" height="320">
+  <title>Editable workflow demo</title>
+  <desc>Synthetic engineering test fixture, not experimental data. All shapes and labels are editable.</desc>
+  <rect id="input_box" x="35" y="105" width="150" height="110" rx="18" fill="#dce9f2" stroke="#233d52" stroke-width="2"/>
+  <circle id="middle_ring" cx="320" cy="160" r="65" fill="#e9e3f1" stroke="#4e4264" stroke-width="2"/>
+  <rect id="output_box" x="455" y="105" width="150" height="110" rx="18" fill="#e5eee2" stroke="#385037" stroke-width="2"/>
+  <path id="arrow_1_shaft" d="M 198 160 L 238 160" fill="none" stroke="#334155" stroke-width="4"/>
+  <polygon id="arrow_1_tip" points="235,151 249,160 235,169" fill="#334155"/>
+  <path id="arrow_2_shaft" d="M 393 160 L 432 160" fill="none" stroke="#334155" stroke-width="4"/>
+  <polygon id="arrow_2_tip" points="429,151 443,160 429,169" fill="#334155"/>
+  <text id="title" x="320" y="52" font-family="Arial" font-size="24" font-weight="bold" fill="#233d52" text-anchor="middle">Editable workflow</text>
+  <text id="input_label" x="110" y="169" font-family="Arial" font-size="20" fill="#233d52" text-anchor="middle">Input</text>
+  <text id="design_label" x="320" y="169" font-family="Arial" font-size="20" fill="#4e4264" text-anchor="middle">Design</text>
+  <text id="output_label" x="530" y="169" font-family="Arial" font-size="20" fill="#385037" text-anchor="middle">Verify</text>
+  <text id="caption" x="320" y="273" font-family="Arial" font-size="13" fill="#475569" text-anchor="middle">Synthetic test fixture - not experimental data</text>
+</svg>

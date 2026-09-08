@@ -5,20 +5,16 @@ authors:
     given-names: Y.
     alias: SPYfighting
 message: >-
-  If you use this skill, please cite it and, more importantly, cite the
-  Anthropic release it adapts and every scientific method your campaign used.
+  If you use this collection, cite the relevant skill and the original
+  methods and sources identified in that skill's NOTICE.md.
 type: software
 abstract: >-
-  A collection of agent skills for research work. Its first skill,
-  binder-design-campaign, is a gated human-in-the-loop protocol for
-  computational protein campaigns: de novo miniprotein binder design, structure
-  and complex prediction, and protein engineering. Adapted from Anthropic's
-  publicly released autonomous binder design protocol prompt, with the autonomy
-  clause inverted into seven human review gates and the internal orchestration
-  replaced by a portable compute backend contract.
+  Self-contained research skills for coding agents, covering computational
+  protein design and editable scientific illustrations. Each skill includes
+  its own workflow, dependencies, attribution, and validation scope.
 license: MIT
-version: 0.4.0
-date-released: '2026-08-19'
+version: 0.5.0
+date-released: '2026-09-08'
 keywords:
   - protein design
   - binder design
@@ -26,6 +22,7 @@ keywords:
   - structure prediction
   - agent skill
   - reproducibility
+  - scientific illustration
 references:
   - type: data
     title: Claude protein binder design (data release v1.0)

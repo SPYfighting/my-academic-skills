@@ -24,7 +24,7 @@ deliverable discipline below hold for all three.
 | structure prediction | `workflows/structure-prediction.md` | folds or complexes with calibrated confidence |
 | protein engineering | `workflows/protein-design-general.md` | stability, enzyme, interface, scaffold redesign |
 
-Provenance and the reasoning behind this structure: `../../binder-design-campaign/docs/`.
+Provenance and rationale: `docs/` and `NOTICE.md`, relative to this skill.
 
 ## Non-negotiables
 
@@ -59,7 +59,7 @@ steps nobody is watching.
    earlier round enter here as operator input at G0, never as something this
    protocol goes and fetches. Work on select agents or toxins, and enhancement
    of pathogen function, is out of scope: stop and say so. See
-   `../RESPONSIBLE_USE.md`.
+   `docs/responsible-use.md`.
 
 ## Gates
 

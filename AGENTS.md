@@ -1,130 +1,31 @@
-# AGENTS.md
+# Repository conventions
 
-Routes agents to the skills here, and states the conventions for changing this
-repository.
+This file governs changes to the repository. To use a skill, read its own `SKILL.md`; its domain rules apply to that workflow.
 
----
+## Find a skill
 
-## Using a skill
-
-| Ask | Read in full, then follow it |
+| Request | Entry point |
 |---|---|
-| protein binders, miniproteins, epitope or hotspot choice, design campaigns | `binder-design-campaign/SKILL.md`, then its `workflows/binder-design.md` |
-| structure or complex prediction, confidence assessment | same `SKILL.md`, then `workflows/structure-prediction.md` |
-| protein stability, enzyme, interface or scaffold redesign | same `SKILL.md`, then `workflows/protein-design-general.md` |
+| Protein binder design, structure prediction, or protein engineering | `binder-design-campaign/SKILL.md` |
+| Editable scientific diagrams, raster reconstruction, or local Illustrator drawing | `scientific-illustrator-local/SKILL.md` |
 
-Two properties of that protocol matter more than the rest:
+## Layout and writing
 
-- **A gate is a hard stop.** Present what
-  `binder-design-campaign/checklists/gate-checklists.md` lists for the gate,
-  then wait for the human. Keep the presentation and the next action in separate
-  messages.
-- **State only what you computed, and fetch every external identifier.**
-  Accessions, PDB IDs, residue ranges and DOIs are the literal output of a
-  lookup executed in the same session that wrote them.
+- One skill per top-level directory, with matching directory name and `name` frontmatter. `SKILL.md` must also include a useful `description`.
+- Each skill is self-contained. Keep runtime instructions, scripts, fixtures, licenses, and required references inside it. Resolve paths relative to the skill root unless a link explicitly says otherwise.
+- Keep entry points concise. Put conditional detail in `references/`, `workflows/`, or other directories only when needed, with a clear pointer explaining when to read it.
+- Write skill instructions in English. Preserve the language of user-provided content such as figure labels. Use ASCII for diagnostic messages and UTF-8 for content files.
+- Prefer standard-library helpers. When a skill requires third-party packages or a native application, declare them in that skill, pin dependencies where appropriate, and make installation an explicit step.
+- Repository documentation covers discovery, installation, contribution, and attribution. Detailed scientific methods, application-specific limits, and review gates belong to their skill.
 
-To install a skill into another project instead of reading it here, see
-`docs/installation.md`.
+For substantial edits to agent-facing prose, use `writing-for-agents` when available. Keep one authoritative explanation of each rule and preserve source attribution. Changes to binder protocol prose must be reflected in its `docs/source-mapping.md`.
 
----
+## Add or change a skill
 
-## Repository layout
+1. Create or update the self-contained skill directory. Preserve existing behavior outside the requested scope.
+2. Provide `scripts/selfcheck.py` for automated validation. It should exercise representative valid input and reject meaningful invalid input, without opening native applications or making network requests. State what remains untested.
+3. Add or update one concise row in each README and the routing table above. Record version changes in `CHANGELOG.md` and `CITATION.cff`; a new skill is a minor repository release.
+4. Run `python check.py` with the required per-skill dependencies available. All selected skills must pass; an absent self-check is not a pass.
+5. Review the complete diff, then commit only the affected skill and related repository files. Publish through normal commits on the intended branch, preserving existing history.
 
-One skill per top-level directory. Nothing else at the root except repository
-documents and `check.py`.
-
-```
-<skill-name>/
-  SKILL.md          the protocol; keep it under ~200 lines
-  workflows/        one file per branch, stage by stage       (optional)
-  references/       long-form detail, loaded on demand        (optional)
-  checklists/       what to present at each human gate        (optional)
-  templates/        starting points the agent copies and fills (optional)
-  scripts/          runnable checks and helpers, plus selfcheck.py
-  examples/         the fixture selfcheck.py runs against
-  docs/             rationale and provenance, for humans, not loaded at runtime
-```
-
-`SKILL.md` is the only required file. The rest exist when the skill needs them.
-
-A skill is self-contained: everything it needs travels with the directory, so
-symlinking it into `~/.claude/skills/` is the whole installation.
-
-## Adding a skill
-
-1. Create `<skill-name>/SKILL.md` with `name` and `description` frontmatter.
-   The directory name and the `name` field must match.
-2. Write the mechanical parts as `scripts/`, the on-demand detail as
-   `references/`, and keep `SKILL.md` short.
-3. Add `scripts/selfcheck.py`. `check.py` finds it by convention and will report
-   the skill as unchecked without it. Exercise the scripts on clean fixture data
-   **and** on a deliberately corrupted copy; a check that never fails is broken.
-4. Add one row to the table in `README.md` and in `README.en.md`.
-5. Note it in `CHANGELOG.md`.
-
-No change to `check.py` is needed.
-
-## Version conventions
-
-- Each skill lives in its own top-level directory; changes to one stay inside it.
-- When editing a single skill, stage and commit that directory plus any
-  repository-level document the change actually affects, and nothing else.
-- Semantic versioning on the repository as a whole, recorded in `CHANGELOG.md`
-  and `CITATION.cff`. A new skill is a minor bump; a change to how an existing
-  skill behaves is a minor bump; a fix is a patch.
-- Run `python check.py` before every push. All skills must pass.
-- Credentials, private keys, local backups, campaign state and any material you
-  do not have the right to publish stay out of Git. `.gitignore` covers the
-  usual paths; confirm the rest yourself before pushing.
-- Line endings are LF in the repository and in the checkout (`.gitattributes`).
-  The scripts run on Linux clusters, where CRLF breaks a shebang.
-
-## Writing rules
-
-These follow the `writing-for-agents` discipline; load that skill before any
-substantial edit to a `SKILL.md` or to this file.
-
-1. **`SKILL.md` stays short.** It loads on every invocation, so every line costs
-   on every turn. New detail goes into `references/` with a pointer added to the
-   index at the foot of `SKILL.md`. Material only some branches reach belongs
-   behind a pointer, not inline.
-2. **Sharpen the pointer before inlining the material.** When the agent fails to
-   reach a reference file, the fix is almost always the wording of the line that
-   names it.
-3. **Prefer a script to a paragraph.** Any rule checkable mechanically belongs
-   in `scripts/`. This is why the protocol is a fraction of its source's length.
-4. **One meaning, one place.** Repeat a *term* on purpose — `gate`, `frozen`,
-   `roster`, `dossier`, `ledger`, *a filter, never an oracle* — and never repeat
-   the explanation behind it. A restated rule is a maintenance bug and inflates
-   its apparent rank.
-5. **Prompt the positive.** State the target behaviour rather than banning its
-   opposite; a prohibition earns its place only as a guardrail that cannot be
-   phrased positively, and then it is paired with the positive target.
-6. **Delete no-ops.** A line the model already obeys by default pays load to say
-   nothing. Settle disagreements by running the document, not by arguing.
-7. **No dependencies in `scripts/`.** Standard library only — these run inside
-   compute jobs on clusters where installing anything is a negotiation.
-8. **English prose, ASCII in program output.** The skill body is English so it
-   works for any user and any agent. Markdown may use typographic punctuation;
-   `print()` may not, because console encodings on Windows and on cluster login
-   nodes mangle it. Do not add instructions about what language the agent should
-   reply in — that belongs to the user's own configuration.
-9. **Cite or delete.** Every empirical claim carries its source. Numbers from a
-   published campaign are quoted as published.
-10. **Tool facts are dated pointers, never authoritative.** The upstream README,
-    model card or paper wins, and the prose says so.
-
-## Before committing
-
-```bash
-python check.py
-```
-
-Every skill must pass. If you changed prose in `binder-design-campaign`, update
-the affected row in `binder-design-campaign/docs/source-mapping.md`.
-
-## Attribution
-
-Content adapted from Anthropic's CC-BY-4.0 release and from MIT-licensed skill
-collections stays attributed in `NOTICE.md`, both there and at its point of use.
-Do not vendor code from another project — reference it.
+Keep line endings LF, as specified by `.gitattributes`. Exclude credentials, private inputs, runtime environments, downloaded binaries, local work, and generated outputs. Preserve licenses and attribution at their point of use and in the repository notice index.

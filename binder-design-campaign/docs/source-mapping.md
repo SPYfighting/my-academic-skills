@@ -77,7 +77,7 @@ Left-hand paths are relative to the HuggingFace release.
 | `Slack input:` — verify relayed directives | dropped as written | the gate model makes the human the direct channel |
 | `Creativity and perseverance:` — evidence-based allocation, living ideas document | kept | `workflows/binder-design.md` stage 5, stage 7 |
 | `Autonomy:` — never ask the operator | **inverted** | the seven gates in `checklists/gate-checklists.md` |
-| `Safety:` — no bioweapons work, comply immediately with a stop | kept, expanded | `SKILL.md` §2 rule 8, `../RESPONSIBLE_USE.md` |
+| `Safety:` — no bioweapons work, comply immediately with a stop | kept, expanded | `SKILL.md` §2 rule 8, `docs/responsible-use.md` |
 
 ## Added here, not in the source
 
