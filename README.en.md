@@ -10,6 +10,7 @@ Research skills for Claude Code, Codex, and OpenCode. Each top-level skill direc
 |---|---|
 | [binder-design-campaign](binder-design-campaign/SKILL.md) | Protein binder design, structure prediction, and protein engineering with human review gates |
 | [scientific-illustrator-local](scientific-illustrator-local/SKILL.md) | Rebuild scientific diagrams as editable vectors with live text and draw them in local Illustrator |
+| [scientific-ppt-drawing](scientific-ppt-drawing/SKILL.md) | Draw editable scientific figures with native PowerPoint shapes and live text |
 
 ## Use
 

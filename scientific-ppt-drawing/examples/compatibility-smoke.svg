@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80">
+  <path id="helix_rail" d="M10 12 C25 0 35 30 50 12 C65 -6 75 30 90 12" fill="none" stroke="#3377aa" stroke-width="2"/>
+  <rect id="plate" x="10" y="40" width="80" height="20" fill="#ddeeff" stroke="#334455"/>
+  <text id="label" x="12" y="70" font-family="Times New Roman" font-size="12">DNA plate</text>
+</svg>

@@ -1,0 +1,2 @@
+# Optional higher-quality raster-to-vector backend.
+vtracer==1.0.0a4

@@ -1,0 +1,11 @@
+# Supported SVG and QA
+
+Use a root `<svg viewBox="0 0 W H">` with finite positive dimensions. Supported drawable tags: `path`, `rect`, `circle`, `ellipse`, `line`, `polygon`, `polyline`, and simple single-line `<text>`. Groups and ordinary transforms are supported; class CSS, filters, masks, clipping, embedded images, external links, and nested SVG are rejected. Plain fill and stroke colors, basic opacity, stroke caps/joins, and normal/bold/italic text are supported. Use arrowheads as native polygons or paths.
+
+Give each important path or text a unique `id`. Conversion preserves paint order and converts quadratic arcs to cubic PowerPoint freeform segments. It creates no `p:pic` raster shape. Font substitution and text metrics may differ between SVG viewers and PowerPoint, so review text in PowerPoint. Avoid SVG stroke dashes, letter spacing, and complex compound fills until the intended output has been visually tested; simplify or explicitly expand them if necessary. Unsupported visual effects should fail rather than silently disappear.
+
+The slide aspect ratio is the SVG viewBox ratio. `--width-in` controls physical width; the default assumes 96 SVG units per inch. The renderer writes a new file and refuses to overwrite a prior version. Its adjacent audit JSON records source/output hashes, native shape counts, text counts, and known limitations.
+
+QA sequence: validate SVG; render a fresh PPTX; inspect its package counts; open it in PowerPoint; compare at the intended display size; select and edit representative text and freeform objects; revise and repeat only for observed differences. An XML count shows object types, not correct visual placement. A PowerPoint screenshot shows layout, not editability. Both checks are required for a fully verified delivery.
+
+Run `figure_cli.py compatibility <figure.pptx>` to check that a generated deck contains base native-shape markup without Office-version extensions, external links, media, macros, pictures, or graphics frames. This reports package properties, not rendering fidelity. When typography changes on a different system, `render ... --fallback-font Arial` writes a separate native-text file and records the number of substituted text shapes in its audit. Recheck the visual result in the target application.

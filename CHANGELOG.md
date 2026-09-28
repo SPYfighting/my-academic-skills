@@ -3,6 +3,15 @@
 All notable changes to this project are recorded here.
 Format follows Keep a Changelog; versioning is semantic.
 
+## [0.6.0] - 2026-09-28
+
+### Added
+- `scientific-ppt-drawing` 0.1.0: create scientific figures from descriptions, reference images, or SVG as native editable PowerPoint paths and live text. It launches PowerPoint for a new file and can transfer objects into a specified open deck. The Baker panel-a workflow was visually and editability checked in macOS PowerPoint 16.113.2. Windows native editing remains untested.
+- Offline self-check for native shapes, text, unsupported input, fallback font, and conservative PPTX markup. A compatibility command identifies versioned Office extensions, linked resources, media, and picture objects; the renderer's blank template no longer contains newer Office extension markers.
+
+### Changed
+- Added the new skill to the bilingual indexes, installation guidance, routing table, and attribution index.
+
 ## [0.5.0] - 2026-09-08
 
 ### Added

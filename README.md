@@ -10,6 +10,7 @@
 |---|---|
 | [binder-design-campaign](binder-design-campaign/SKILL.md) | 带人工检查关卡的蛋白结合子设计、结构预测与蛋白工程流程 |
 | [scientific-illustrator-local](scientific-illustrator-local/SKILL.md) | 将科研示意图重建为可编辑矢量图，保留真实文字，并在本地 Illustrator 中绘制 |
+| [scientific-ppt-drawing](scientific-ppt-drawing/SKILL.md) | 在 PowerPoint 中用原生图形和文字绘制可编辑的科研示意图 |
 
 ## 使用
 

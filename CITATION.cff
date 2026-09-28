@@ -10,11 +10,12 @@ message: >-
 type: software
 abstract: >-
   Self-contained research skills for coding agents, covering computational
-  protein design and editable scientific illustrations. Each skill includes
+  protein design, editable scientific illustrations, and native PowerPoint
+  scientific figures. Each skill includes
   its own workflow, dependencies, attribution, and validation scope.
 license: MIT
-version: 0.5.0
-date-released: '2026-09-08'
+version: 0.6.0
+date-released: '2026-09-28'
 keywords:
   - protein design
   - binder design
@@ -23,6 +24,7 @@ keywords:
   - agent skill
   - reproducibility
   - scientific illustration
+  - PowerPoint drawing
 references:
   - type: data
     title: Claude protein binder design (data release v1.0)

@@ -44,6 +44,7 @@ Dependencies belong to each skill, not to the collection as a whole.
 
 - `binder-design-campaign`: its validation scripts use the Python standard library; its computational workflows require separately configured scientific tools.
 - `scientific-illustrator-local`: follow its [environment and native-application setup](../scientific-illustrator-local/references/installation-and-compatibility.md). It requires CPython 3.11-3.13 and declared Python packages; Illustrator is needed only for native drawing. The optional VTracer executable is installed separately.
+- `scientific-ppt-drawing`: follow its [setup and application control](../scientific-ppt-drawing/references/setup-and-app-control.md). It requires CPython 3.11-3.13 and its pinned Python packages; PowerPoint is needed for native visual and editability review. Windows PowerPoint has not been tested on hardware.
 
 Run all checks from the repository root, using an appropriate Python environment:
 
@@ -51,4 +52,4 @@ Run all checks from the repository root, using an appropriate Python environment
 python check.py
 ```
 
-To check only one skill, append its directory name. The figure self-check can use its local `.venv` or an explicitly supplied `SCIENTIFIC_ILLUSTRATOR_PYTHON` path. The runner does not install packages, start Illustrator, or upload files. Native application and scientific validation remain separate from these automated checks.
+To check only one skill, append its directory name. The Illustrator self-check can use its local `.venv` or an explicitly supplied `SCIENTIFIC_ILLUSTRATOR_PYTHON` path. The PowerPoint self-check uses the Python interpreter running `check.py`; use its prepared `.venv` when the system interpreter lacks the pinned packages. The runner does not install packages, start a native application, or upload files. Native application and scientific validation remain separate from these automated checks.

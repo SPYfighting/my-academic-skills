@@ -8,6 +8,7 @@ This file governs changes to the repository. To use a skill, read its own `SKILL
 |---|---|
 | Protein binder design, structure prediction, or protein engineering | `binder-design-campaign/SKILL.md` |
 | Editable scientific diagrams, raster reconstruction, or local Illustrator drawing | `scientific-illustrator-local/SKILL.md` |
+| Editable scientific figures drawn in PowerPoint or PPTX | `scientific-ppt-drawing/SKILL.md` |
 
 ## Layout and writing
 
