@@ -1,7 +1,8 @@
 # Source mapping
 
 Where each part of the source prompt went. The source is
-`prompts/prompts/multi_target_binder_design_prompt.md` from Anthropic's
+`sources/anthropic/multi_target_binder_design_prompt.md`, copied without edits
+from `prompts/prompts/multi_target_binder_design_prompt.md` in Anthropic's
 CC-BY-4.0 release (113,932 bytes, 16,281 words, 288 lines as retrieved
 2026-08-19). It has no Markdown headings; its sections are marked by line-initial
 keywords such as `Task:`, `Compute:`, `Deliverables:`, which are the section
@@ -38,7 +39,7 @@ Left-hand paths are relative to the HuggingFace release.
 | Scoring instrument (3 arms, ipSAE_min, sc_DockQ, pose_PASS) | kept | `references/scoring-instrument.md` §§2–3 |
 | final_score and rank_zscore formulas, 4:1 weighting | kept | `references/scoring-instrument.md` §4 |
 | Seed tiers (SCREEN / INTERMEDIATE / FINAL) | kept, with an `explore` variant | `references/scoring-instrument.md` §5, `SKILL.md` §5 |
-| Validation gate, conditions (a) and (b), control selection | kept, made a human gate too | `references/validation-gates.md`, gate G3 |
+| Validation gate, conditions (a) and (b), control selection | kept, with explicit evidence levels when no positive control exists | `references/validation-gates.md`, checkpoint G3 |
 | MSA caching rules | kept | `references/tool-catalog.md` §4 |
 | ipSAE union-mask construction for multimers | kept | `references/scoring-instrument.md` §3.1 |
 | z-score transductivity | kept, promoted | `references/scoring-instrument.md` §6, `references/failure-modes.md` §8 |
@@ -74,14 +75,15 @@ Left-hand paths are relative to the HuggingFace release.
 | `Unavailability:` — query before declaring a tool missing | kept | `references/tool-catalog.md` §7 |
 | `Logistics:` — design_id scheme, script version stamping, secret handling | kept | `references/compute-backends.md` §1, `references/deliverables-spec.md` §1.3 |
 | `Isolation:` / `Volume layout:` | adapted | `references/compute-backends.md` §9 |
-| `Slack input:` — verify relayed directives | dropped as written | the gate model makes the human the direct channel |
+| `Slack input:` — verify relayed directives | dropped as written | user decisions are recorded directly in the campaign decision ledger |
 | `Creativity and perseverance:` — evidence-based allocation, living ideas document | kept | `workflows/binder-design.md` stage 5, stage 7 |
-| `Autonomy:` — never ask the operator | **inverted** | the seven gates in `checklists/gate-checklists.md` |
+| `Autonomy:` — never ask the operator | **adapted** | `references/campaign-planning.md`: one required plan review; optional later review stops; autonomous execution only through the user-approved stage and resource boundary |
 | `Safety:` — no bioweapons work, comply immediately with a stop | kept, expanded | `SKILL.md` §2 rule 8, `docs/responsible-use.md` |
 
 ## Added here, not in the source
 
-- The seven-gate model and its checklists.
+- The G0 plan review, configurable stage authorization and G1–G6 evidence
+  checkpoints (`references/campaign-planning.md`, `templates/campaign_plan.md`).
 - The `explore` and `standard` scale presets.
 - The Slurm and local compute adapters.
 - The runnable checks in `scripts/`, and the fixture in `binder-design-campaign/examples/`.
@@ -101,8 +103,8 @@ Left-hand paths are relative to the HuggingFace release.
 - **Distinguishable missing-value semantics** (`NOT_RUN` / `FAILED` /
   `UNSUPPORTED` / `CONSTRUCT_FAIL`). The source banned sentinels and required
   NaN; NaN alone cannot tell a timed-out arm from an unsuitable one.
-- `templates/scoring_policy.yaml`, so the ranking formula is frozen as a file
-  the checks read rather than as prose in three documents.
+- `templates/scoring_policy.yaml` and required full-pool normalization input,
+  so the sheet checker recomputes both summary scores from recorded terms.
 - The **perturbation control** at G3 (hotspot-deleted positive control), which
   tests whether an arm is scoring the specified epitope rather than merely
   noticing two plausible proteins.

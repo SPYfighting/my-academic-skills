@@ -1,0 +1,62 @@
+{
+  "pool_id": "synthetic-fixture-full-scored-pool",
+  "note": "Synthetic arithmetic fixture, not experimental calibration.",
+  "targets": {
+    "EGFR": {
+      "terms": {
+        "ipsae_ef2full": {
+          "mean": 0.0,
+          "sd": 1.0
+        },
+        "ipsae_ef2fast": {
+          "mean": 0.0,
+          "sd": 1.0
+        },
+        "ipsae_ptxv2": {
+          "mean": 0.0,
+          "sd": 1.0
+        },
+        "sc_dockq_ef2full": {
+          "mean": 0.0,
+          "sd": 1.0
+        },
+        "sc_dockq_ef2fast": {
+          "mean": 0.0,
+          "sd": 1.0
+        },
+        "sc_dockq_ptxv2": {
+          "mean": 0.0,
+          "sd": 1.0
+        }
+      }
+    },
+    "PD-L1": {
+      "terms": {
+        "ipsae_ef2full": {
+          "mean": 0.0,
+          "sd": 1.0
+        },
+        "ipsae_ef2fast": {
+          "mean": 0.0,
+          "sd": 1.0
+        },
+        "ipsae_ptxv2": {
+          "mean": 0.0,
+          "sd": 1.0
+        },
+        "sc_dockq_ef2full": {
+          "mean": 0.0,
+          "sd": 1.0
+        },
+        "sc_dockq_ef2fast": {
+          "mean": 0.0,
+          "sd": 1.0
+        },
+        "sc_dockq_ptxv2": {
+          "mean": 0.0,
+          "sd": 1.0
+        }
+      }
+    }
+  }
+}

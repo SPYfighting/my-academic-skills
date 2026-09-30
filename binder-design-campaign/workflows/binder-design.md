@@ -11,11 +11,14 @@ criterion** that is checkable from artifacts.
 ## Stage 0 — Scope (gate G0)
 
 **Inputs**: the user's request.
-**Work**: run the G0 checklist. Produce the one-page campaign plan.
-**Outputs**: `state/campaign_config.yaml` (from `../templates/campaign_config.yaml`),
-`state/decisions.jsonl` with the G0 answers.
-**Done**: the human confirmed the plan; the config file exists and every field
-is filled or explicitly marked `unresolved`.
+**Work**: use `../references/campaign-planning.md` and the G0 checklist. Ask
+remaining boundary questions once, then produce the staged campaign plan.
+**Outputs**: `state/campaign_plan.md` (from `../templates/campaign_plan.md`),
+`state/campaign_config.yaml`, `state/decisions.jsonl`, and, after approval,
+`state/authorization.json` with `authorized_through_stage`.
+**Done**: the user confirmed the plan and execution limit; unknowns are
+explicit assumptions. Stage 0 is a complete plan-only outcome when the user
+does not authorize execution.
 
 ---
 
@@ -63,8 +66,10 @@ wastes the budget.
 `../references/target-dossier-guide.md`. Every identifier fetched, every field
 sourced.
 **Outputs**: `state/dossiers/<target>.md`.
-**Done**: the human confirmed the assay construct, the reference structure and
-the cofactor list for every target. These three are now frozen.
+**Done**: the assay construct, reference structure and cofactor list are sourced
+and frozen for every target, with the decision source recorded. Ask for a user
+decision only when the intended assay cannot be determined from the brief and
+evidence, or the approved plan requested a G1 review.
 
 ---
 
@@ -88,7 +93,9 @@ the cofactor list for every target. These three are now frozen.
 
 **Outputs**: `state/epitopes/<target>.json` with the chosen epitope(s), the
 hotspot residue list verbatim, and the mechanistic hypothesis.
-**Done**: the human picked the epitope(s) and confirmed or edited the hotspots.
+**Done**: epitope(s) and hotspots are selected with alternatives and evidence
+recorded. The agent may make this choice within the approved plan; a user can
+override it at a requested G2 review.
 
 A second epitope per target is encouraged once the primary is on track and the
 budget allows. It is not required, and it is proposed at G2 rather than added
@@ -103,8 +110,9 @@ silently later.
 recapitulation per arm, positive-control separation per arm, calibration bands,
 seed-variance measurement, threshold freezing.
 **Outputs**: `state/gates/<target>.json` with `status`.
-**Done**: `status: PASS` **and** the human acknowledged the mask, the construct
-and the thresholds.
+**Done**: `status: PASS` with its evidence level and the frozen mask, construct
+and thresholds. Fold-only evidence is usable only if G0 explicitly authorized
+that limitation; it does not validate binding discrimination.
 
 Until this file says PASS, the submit gate refuses every scoring dispatch for
 that target. That is the intended behaviour; do not work around it.
@@ -121,8 +129,8 @@ accumulates. Early on the prior dominates; later the live signal does. The only
 hard bound is a floor — every target gets enough compute to produce its full
 ranked set.
 **Outputs**: `state/allocation.json`, the wave plan.
-**Done**: the human confirmed the allocation and, on metered backends, the spend
-ceiling.
+**Done**: allocation remains within the G0-approved ceiling; measured canary
+costs and any in-range reallocation are recorded. An increase returns to G0.
 
 ---
 
@@ -219,7 +227,9 @@ same seed count.
 write time. Run `../scripts/check_design_sheet.py` and
 `../scripts/check_diversity.py`.
 **Outputs**: the design sheet, the diversity summary, the relaxation record.
-**Done**: the human approved the sheet as the set to be ordered.
+**Done**: the sheet and selection rationale pass the checks. Present it when
+the authorized range ends here or the plan requested G5 review. Experimental
+ordering needs separate authorization.
 
 ---
 
@@ -230,8 +240,9 @@ write time. Run `../scripts/check_design_sheet.py` and
 §8 — seed top-up, freeze, derive companions, rebuild and open the structure
 bundle, regenerate every report number, adversarial review.
 **Outputs**: the full deliverable set.
-**Done**: every G6 checklist box checked with evidence shown, and the human
-accepted delivery.
+**Done**: every G6 checklist box is checked with saved evidence and the
+computational deliverables are presented. Any unverified item is reported as
+an open defect rather than claimed complete.
 
 ---
 

@@ -2,8 +2,8 @@
 #
 # Pre-registered at G3, frozen before the first production scoring job, and
 # recorded in the campaign log. references/scoring-instrument.md explains why
-# each field is what it is; this file is what the sheet writer and the checks
-# actually read, so a change here is the only way to change the ranking.
+# each field is what it is. The sheet checker reads this file; any campaign
+# writer must use the same frozen policy. No writer is bundled in this skill.
 #
 # Changing any field after production scoring begins re-opens G3 and
 # invalidates every score computed under the old values.
@@ -41,10 +41,12 @@ substitutes: {}          # arm_name -> what stood in for it, and why
 # rank_zscore; final_score is the unweighted mean of the same raw terms.
 terms:
   - metric: ipsae_min
+    column_prefix: ipsae
     per_arm: true
     seed_aggregation: max
     weight: 4
   - metric: sc_dockq
+    column_prefix: sc_dockq
     per_arm: true
     seed_aggregation: argmax_ipsae_min_seed   # same seed as that arm's ipSAE
     weight: 1

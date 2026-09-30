@@ -70,8 +70,9 @@ Write `unresolved` and say what you tried.
 Present, as a table: which positions or regions are designable, which are
 frozen, the rationale for each, and the size of the resulting sequence space.
 Then present two or three **strategies** (conservative resurfacing, focused
-library at a defined region, backbone redesign) with their cost and risk, and
-let the human choose.
+library at a defined region, backbone redesign) with their cost and risk. The
+agent may select within the approved stage range; present the choice for human
+review if the plan requested it or the choice changes the approved objective.
 
 ### G3 — discriminator validation
 

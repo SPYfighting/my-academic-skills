@@ -42,7 +42,7 @@ Discovery conventions checked on 2026-09-08: [Codex](https://developers.openai.c
 
 Dependencies belong to each skill, not to the collection as a whole.
 
-- `binder-design-campaign`: its validation scripts use the Python standard library; its computational workflows require separately configured scientific tools.
+- `binder-design-campaign`: install its pinned Python validation dependency with `python -m pip install -r binder-design-campaign/requirements.txt`; its computational workflows require separately configured scientific tools and a validated compute backend.
 - `scientific-illustrator-local`: follow its [environment and native-application setup](../scientific-illustrator-local/references/installation-and-compatibility.md). It requires CPython 3.11-3.13 and declared Python packages; Illustrator is needed only for native drawing. The optional VTracer executable is installed separately.
 - `scientific-ppt-drawing`: follow its [setup and application control](../scientific-ppt-drawing/references/setup-and-app-control.md). It requires CPython 3.11-3.13 and its pinned Python packages; PowerPoint is needed for native visual and editability review. Windows PowerPoint has not been tested on hardware.
 

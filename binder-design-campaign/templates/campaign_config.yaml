@@ -8,6 +8,12 @@ campaign:
   created_utc:        # from an executed clock call
   operator:           # who signs off at the gates
 
+authorization:
+  through_stage: 0     # 0 = plan only; set from the user's G0 approval (0..10)
+  review_stops: []     # optional G1..G6 checkpoints the user wants to inspect
+  allow_fold_only_instrument: false # only true after explicit approval of weaker G3 evidence
+  external_actions: [] # ordering, uploads, purchases require explicit inclusion
+
 # --- The scientific question ------------------------------------------------
 # Filled first, at G0, before anything else. An in silico metric is never the
 # objective: it is the proxy the campaign optimises because the endpoint cannot
@@ -90,7 +96,7 @@ licensing:
 instrument:
   ranking_arms: []                # frozen at G3
   substitutes: {}                 # arm -> what stood in for it
-  ranking_formula: default_4to1   # or a pre-registered alternative
+  ranking_formula: default_3arm_4to1 # or a pre-registered alternative
   pose_dockq_threshold: 0.23
   monomer_plddt_threshold: 0.70
   monomer_plddt_scale: "0-1"

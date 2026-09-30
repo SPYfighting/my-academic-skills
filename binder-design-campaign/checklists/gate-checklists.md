@@ -1,20 +1,22 @@
 # Gate checklists
 
-Read the relevant section when you reach a gate. Present exactly the tables
-described, then stop and wait for the human.
+Read the relevant section at each checkpoint. Save the tables and evidence in
+the campaign state. Present them to the user when the approved plan names a
+review stop or its stage limit has been reached; otherwise continue within the
+approved boundary.
 
 Rules that apply to every gate:
 
-- **Present, then stop.** Do not bundle a gate presentation with the next
-  action in the same message.
+- **Respect the approved stage limit.** G0 always waits for user approval.
+  Later checkpoints stop only when the plan requires review, a material premise
+  changes, or the approved limit has been reached.
 - **Show the evidence, not the conclusion.** Every row that carries a fact
   carries where the fact came from (accession, PDB ID, DOI, or the command that
   produced it). A row you could not source says `unsourced` and explains why.
-- **Offer a recommendation, once.** State which option you would choose and in
-  one sentence why. Do not argue for it after the human answers.
-- **Record the answer.** Append the decision, its timestamp and the human's
-  wording to `state/decisions.jsonl` before moving on. Later stages cite this
-  file, not the conversation.
+- **Record the decision.** Append its source (`agent` or `user`), evidence,
+  timestamp and wording to `state/decisions.jsonl` before moving on. A user
+  review receives a recommendation and its reason; an agent decision cites the
+  same evidence rather than implying the user approved a scientific judgment.
 - **A gate re-opens when its premise changes.** If a fold-recapitulation
   failure at G3 shows the construct was wrong, you are back at G1.
 
@@ -22,11 +24,12 @@ Rules that apply to every gate:
 
 ## G0 — Scope and resources
 
-Blocks: everything.
+Blocks execution beyond planning until the user authorizes a stage range.
 
-Ask, in one round, and do not start work until all are answered. The first
-three are the campaign brief and they come first: a campaign that optimises the
-right metric toward the wrong endpoint fails invisibly and completely.
+Use `../references/campaign-planning.md` for the one-round intake and the
+campaign plan. Research discoverable facts before asking. The first three
+topics below define the brief; unanswered technical fields may be sourced or
+marked as assumptions in the plan rather than blocking its preparation.
 
 1. **The endpoint**: what the experiment will actually measure, and how. Not
    "a high-scoring binder" - "SPR K_D against the human ECD, with no response
@@ -43,12 +46,13 @@ right metric toward the wrong endpoint fails invisibly and completely.
    one. Each scorable entry becomes a counter-screen; each unscorable one is
    checked at G5 by inspection and said so.
 4. **Workflow**: binder design / structure prediction / general protein design.
-5. **Target(s)**: name, UniProt accession (or explicit "no accession, here is
-   the sequence"), organism, expected oligomeric state at assay conditions.
+5. **Target(s)**: name or sequence from the user; fetch the accession,
+   organism and oligomeric state where possible.
 6. **Deliverable**: how many designs per target, and what happens to them
    (in-house expression, CRO order, computational only). Default 30 per target.
-7. **Compute backend**: Slurm / local / metered cloud; partition or queue name,
-   GPU type and count, walltime limit, and any per-job memory cap.
+7. **Compute resources**: inspect available local, Slurm or cloud resources;
+   ask for an explicit spending ceiling before using paid compute. Account
+   balance or available GPUs do not themselves grant spending authority.
 8. **Scale preset**: `explore` / `standard` / `full`, or explicit numbers.
 
     | Preset | Generated per target | Screen | Final | Optimisation rounds | Envelope |
@@ -76,13 +80,12 @@ right metric toward the wrong endpoint fails invisibly and completely.
     choose an epitope, a difficulty prior and a negative objective, and it does
     not analyse the data or claim conclusions from it.
 
-Present back a **one-page campaign plan** before proceeding: the brief
-(endpoint, success, failure, negative objectives), then targets, workflow,
-backend, preset, per-target design count, deliverable list, and the estimated
-GPU-hours with the arithmetic shown. Then stop.
+Present `state/campaign_plan.md` before execution: the brief, stages, proposed
+scientific decisions, backend, deliverables, estimated GPU-hours with arithmetic,
+resource ceiling and review stops. Ask the user how far to authorize, 0–10.
 
-**Pass criterion**: the human confirms the plan, or amends it and confirms the
-amendment.
+**Pass criterion**: the user confirms a specific plan and stage limit. Write
+`state/authorization.json` only then. A plan without approval has stage limit 0.
 
 ---
 
@@ -114,9 +117,11 @@ Flag explicitly, above the table, any of these:
 - No deposited structure has the intended epitope ordered.
 - No non-antibody positive control exists (this changes what G3 can prove).
 
-**Pass criterion**: the human confirms the construct, the chosen structure and
-the cofactor list. These three become frozen inputs; changing them later
-invalidates every score computed under the old ones.
+**Pass criterion**: the construct, chosen structure and cofactor list are
+sourced and recorded as frozen inputs. The agent can make this decision inside
+the approved range; use a user review stop only if requested or if a material
+assumption about the intended assay remains unresolved. Changing these inputs
+later invalidates scores computed under the old ones.
 
 ---
 
@@ -145,9 +150,10 @@ Also state, per target:
 - For homo-oligomeric targets, the **target-fold mimicry risk** and how the
   novelty gate will catch it (`../references/failure-modes.md` §2).
 
-**Pass criterion**: the human picks the epitope(s) and confirms or edits the
-hotspot residues. Record the residue list verbatim; every downstream contig
-cites it.
+**Pass criterion**: the chosen epitope(s), rejected alternatives and hotspot
+residues have recorded evidence. The agent may choose them within the approved
+range; the user can review or override. Every downstream contig cites the
+recorded residue list.
 
 ---
 
@@ -155,8 +161,8 @@ cites it.
 
 Blocks: **all production scoring**. Mechanical, non-waivable.
 
-This gate is the campaign's only defence against a scoring instrument that
-cannot tell a binder from a non-binder on this particular target. Full
+This gate tests whether the scoring instrument can separate known binding from
+negative controls on this target when such controls exist. Full
 procedure in `../references/validation-gates.md`.
 
 Produce `state/gates/<target>.json` and present its contents:
@@ -181,15 +187,17 @@ Also present:
   ranking formula you want to pre-register instead of the default and the
   control-separation evidence that justifies it.
 
-**Pass criterion**: `status: PASS` written to the gate file **and** the human
-acknowledges the mask, the construct and the thresholds. If (b) fails on every
-arm, do not self-authorise: report the failure, present the three recovery
-options in `../references/validation-gates.md` §4, and wait.
+**Pass criterion**: the gate file has `status: PASS` and a truthful
+`evidence_level`, with frozen mask, construct and thresholds. If (b) fails on
+every arm, try the three recovery options in
+`../references/validation-gates.md` §4 within the approved resources. If none
+works, stop and present the weaker evidence and a revised plan; do not silently
+declare the instrument validated.
 
-If no literature control exists after a documented search, condition (b) is
-dropped — say so in plain language, because it means the campaign is running
-without a demonstrated ability to distinguish binders from non-binders on this
-target.
+If no literature control exists after a documented search, record
+`evidence_level: FOLD_ONLY`. It permits exploratory scoring only when the
+approved plan explicitly allows it. Say plainly that binding discrimination
+has not been demonstrated on this target.
 
 ---
 
@@ -212,8 +220,9 @@ Present:
   `../references/thresholds.md` §5, so the first wave's realised rate can be
   read as a diagnostic rather than a surprise.
 
-**Pass criterion**: the human confirms the allocation. On metered backends,
-also confirm the spend ceiling and who is authorised to raise it.
+**Pass criterion**: allocation is inside the G0 resource ceiling and recorded.
+Any increase needs a revised user-approved ceiling; in-range reallocations are
+agent decisions with ledger evidence.
 
 ---
 
@@ -253,9 +262,10 @@ paste their output. Then present, per target:
    dossier's `prior_difficulty`; anything about this target that makes you less
    confident than the numbers suggest.
 
-**Pass criterion**: the human approves the sheet as the set to be ordered, or
-edits it. Any human edit is recorded as a row-level annotation in the sheet, not
-silently applied.
+**Pass criterion**: the sheet passes its checks and the selection rationale is
+recorded. If the approved range ends here, present it for review. A user edit
+is recorded as a row-level annotation, never silently applied. Ordering is an
+external action and requires its own authorization.
 
 ---
 
@@ -263,8 +273,8 @@ silently applied.
 
 Blocks: declaring completion.
 
-Run every script in `../scripts/` against the **as-shipped** artifacts and paste
-the output. Then confirm each of these with the evidence beside it:
+Run the relevant validators against the **as-shipped** artifacts and save
+their output. Then confirm each of these with the evidence beside it:
 
 - [ ] Design sheet passes schema, null-policy and diversity checks.
 - [ ] Per-seed companion covers 100% of ranked design_ids, exact match.
@@ -281,6 +291,6 @@ the output. Then confirm each of these with the evidence beside it:
 - [ ] Deviations file is the deduplicated union, one JSON object per line.
 - [ ] Archive location and its total size stated.
 
-**Pass criterion**: every box checked with evidence shown, and the human
-accepts delivery. A box that cannot be checked is reported as an open defect —
-never checked on intent.
+**Pass criterion**: every box checked with evidence shown. If a box cannot be
+checked, deliver an explicit open defect, not a claim of completion. Present
+the result when the authorized range ends; user acceptance can follow delivery.

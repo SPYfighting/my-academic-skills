@@ -2,33 +2,33 @@
 
 Why this repository is shaped the way it is. Read `source-mapping.md` for the
 line-by-line correspondence with the original prompt; this file explains the
-four decisions behind that mapping.
+major decisions behind that mapping.
 
 ---
 
-## 1. The gates exist because the failures were silent
+## 1. Evidence checkpoints exist because the failures were silent
 
 The source campaign was a deliberate autonomy experiment: one written protocol,
 no human input on any design decision, 48 hours. It worked — 27% of 1,320
 synthesised designs bound, 49% among the top-ranked design per target. That is
 the correct experiment to run once.
 
-It is not the correct default for a laboratory campaign, for a reason visible in
-the same data. Three targets produced almost nothing, and the in silico scores
-that drove the whole pipeline **gave no warning**. Designs against
+The same data reveal a limit: three targets produced almost nothing, and the
+in silico scores that drove the whole pipeline **gave little warning**. Designs against
 maltose-binding protein, which yielded 0 of 90, scored about as well as designs
-against VEGF-A, which yielded many. A campaign that cannot detect its own
-failure from its own numbers needs a human looking at the parts where judgement
-is cheap and consequential: which construct, which epitope, whether the scoring
-instrument has any demonstrated discriminating power on this target.
+against VEGF-A, which yielded many. A campaign needs explicit evidence at the
+consequential choices: construct, epitope and whether the scoring instrument
+has demonstrated discriminating power on this target.
 
-Those are exactly gates G1, G2 and G3. They sit before the expensive part, and
-each of them is a decision an experienced designer makes in minutes and an agent
-gets wrong invisibly.
+Those are checkpoints G1, G2 and G3. An agent may make the scientific choice
+within a user-approved plan, but must record the alternatives and evidence.
+A non-specialist's approval does not turn an unsupported choice into a
+validated one.
 
-The other four gates are bookkeeping by comparison — scope, allocation,
-selection, acceptance — but they are where a campaign silently changes shape if
-nobody is asked.
+The user reviews the scope once and chooses an execution limit. Later review
+stops are optional within that limit; a change in goal, cost or external action
+returns to the user. This supports both an autonomous run through delivery and
+a campaign reviewed stage by stage.
 
 ## 2. Length was a structural problem, not a verbosity problem
 
@@ -97,9 +97,9 @@ instruments, transductive z-scores, provenance keys, nothing-discarded storage,
 derived deliverables, adversarial review. So `workflows/` holds three thin files
 that state their deltas, and `references/` holds the shared core once.
 
-The delta that matters is at G3. Binder design has a strong general in silico
-discriminator, which is why it can rank thousands of candidates before spending
-a wet-lab dollar. Structure prediction has no design pool to separate, so its G3
+The delta that matters is at G3. Binder design has useful within-target in
+silico filters, but their score does not reliably predict whether an unfamiliar
+target will yield a hit. Structure prediction has no design pool to separate, so its G3
 becomes held-out recapitulation. General protein design usually has a *weak*
 discriminator, and its G3 measures how weak — because a campaign that ranks on
 an unvalidated score should be sized by experimental throughput, not by in

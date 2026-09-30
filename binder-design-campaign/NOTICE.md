@@ -21,6 +21,11 @@ The specific file adapted here is
 sixteen single-target variants of comparable length, the campaign figures, and
 the binding data.
 
+An unmodified reference copy is stored at
+`sources/anthropic/multi_target_binder_design_prompt.md`. It remains under
+Anthropic's CC-BY-4.0 license and is not relicensed by this repository's MIT
+license. Its historical campaign instructions are reference material only.
+
 **Technical report** — *Autonomous de novo protein binder design with Claude*,
 Claude Science and Amir Shanehsazzadeh, Anthropic, 18 August 2026:
 <https://www-cdn.anthropic.com/30bf50e22a01388bb29bf077ee3f244531594b7a.pdf>
@@ -50,8 +55,10 @@ contract in `references/compute-backends.md`, which keeps their *ideas*
 (fail-closed submission, metered-spend canonicality, evidence-based reaping,
 generation-versus-scoring backlog capping) without the implementation.
 
-**Inverted**: the source prompt's autonomy clause, which forbade asking the
-operator anything. This skill replaces it with seven review gates.
+**Adapted**: the source prompt's autonomy clause. This skill requires one
+user-approved staged plan and lets the user choose whether execution stops at
+intermediate checkpoints or continues through computational delivery. Agent
+scientific choices and resource use stay within that approved boundary.
 
 Numbers quoted in `references/failure-modes.md` §1 are from
 the technical report as published.

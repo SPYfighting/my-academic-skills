@@ -4,7 +4,9 @@
 Turns the sheet-writer invariants from references/deliverables-spec.md into a
 runnable check. Standard library only, so it runs anywhere the campaign runs.
 
-    python check_design_sheet.py --sheet design_sheet.csv --schema sheet_schema.json
+    python check_design_sheet.py --sheet design_sheet.csv \
+        --schema sheet_schema.json --policy scoring_policy.yaml \
+        --normalization score_normalization.json
 
 Exit code 0 when there are no errors, 1 otherwise. Warnings never fail the run;
 they are things a human should look at.
@@ -16,6 +18,11 @@ import json
 import math
 import sys
 from collections import defaultdict
+
+try:
+    import yaml
+except ImportError as exc:
+    raise SystemExit("PyYAML is required; install binder-design-campaign/requirements.txt") from exc
 
 NULL_STRINGS = {"", "na", "n/a", "none", "null", "pending", "nan"}
 
@@ -334,17 +341,118 @@ def check_per_target(rows, schema, rep):
                           "final_score is null or NaN; it is never relaxed")
 
 
+def check_scoring(rows, schema, policy, normalization, rep):
+    """Recompute the summary columns from the frozen raw terms and pool stats."""
+    if not isinstance(policy, dict) or not policy.get("frozen_at_utc"):
+        rep.error("policy", "scoring policy has no frozen_at_utc")
+        return
+    if not isinstance(normalization, dict) or not normalization.get("pool_id"):
+        rep.error("normalization", "full scored-pool identity is missing")
+        return
+    arms = schema.get("ranking_arms", [])
+    policy_arms = [arm.get("name") for arm in policy.get("arms", [])]
+    if not arms or arms != policy_arms:
+        rep.error("policy", "ranking_arms differ from the frozen scoring policy")
+        return
+    terms = policy.get("terms", [])
+    if (not terms or any(term.get("weight", 0) <= 0 or
+                         term.get("per_arm") is not True or
+                         not term.get("column_prefix") for term in terms)):
+        rep.error("policy", "scoring terms or weights are invalid")
+        return
+    counter = policy.get("counter_screen", {})
+    targets = normalization.get("targets", {})
+    for row in rows:
+        target = row.get("target")
+        where = "row {}".format(row.get("design_id"))
+        stats = targets.get(target, {}).get("terms", {})
+        values = []
+        weighted_z = []
+        for arm in arms:
+            for term in terms:
+                name = "{}_{}".format(term.get("column_prefix", term["metric"]), arm)
+                val = parse_float(row.get(name))
+                if val is None or not math.isfinite(val):
+                    rep.error(where, "ranking term {} is absent or non-finite".format(name))
+                    continue
+                values.append(val)
+                summary = stats.get(name, {})
+                mu = summary.get("mean")
+                sd = summary.get("sd")
+                if (not isinstance(mu, (int, float)) or
+                        not isinstance(sd, (int, float)) or
+                        not math.isfinite(mu) or not math.isfinite(sd) or sd <= 0):
+                    rep.error(where, "{} has no valid full-pool normalization".format(name))
+                    continue
+                weighted_z.append(((val - mu) / sd, term["weight"]))
+            if counter.get("enabled"):
+                on = parse_float(row.get("ipsae_{}".format(arm)))
+                off = parse_float(row.get("ipsae_offtarget_{}".format(arm)))
+                delta = parse_float(row.get("selectivity_delta_{}".format(arm)))
+                if any(v is None or not math.isfinite(v) for v in (on, off, delta)):
+                    rep.error(where, "counter-screen values for {} are incomplete".format(arm))
+                    continue
+                if not math.isclose(delta, on - off, abs_tol=1e-5):
+                    rep.error(where, "selectivity_delta_{} does not equal on minus off".format(arm))
+                name = "selectivity_delta_{}".format(arm)
+                values.append(delta)
+                summary = stats.get(name, {})
+                mu, sd = summary.get("mean"), summary.get("sd")
+                if (not isinstance(mu, (int, float)) or
+                        not isinstance(sd, (int, float)) or
+                        not math.isfinite(mu) or not math.isfinite(sd) or sd <= 0):
+                    rep.error(where, "{} has no valid full-pool normalization".format(name))
+                else:
+                    weighted_z.append(((delta - mu) / sd, counter["term_weight"]))
+        expected_count = len(arms) * (len(terms) + bool(counter.get("enabled")))
+        if len(values) != expected_count or len(weighted_z) != expected_count:
+            continue
+        expected_final = sum(values) / len(values)
+        recorded_final = parse_float(row.get("final_score"))
+        if (recorded_final is None or not math.isfinite(recorded_final) or
+                not math.isclose(recorded_final, expected_final, abs_tol=1e-5)):
+            rep.error(where, "final_score differs from frozen raw-term mean {:.6f}"
+                      .format(expected_final))
+        expected_z = sum(z * weight for z, weight in weighted_z) / sum(
+            weight for _, weight in weighted_z)
+        recorded_z = parse_float(row.get("rank_zscore"))
+        if (recorded_z is None or not math.isfinite(recorded_z) or
+                not math.isclose(recorded_z, expected_z, abs_tol=1e-4)):
+            rep.error(where, "rank_zscore differs from frozen weighted z-score {:.6f}"
+                      .format(expected_z))
+        pose_terms = [parse_float(row.get("sc_dockq_{}".format(arm))) for arm in arms]
+        if all(value is not None and math.isfinite(value) for value in pose_terms):
+            expected_pose = min(pose_terms)
+            recorded_pose = parse_float(row.get("pose_dockq"))
+            if (recorded_pose is None or not math.isfinite(recorded_pose) or
+                    not math.isclose(recorded_pose, expected_pose, abs_tol=1e-5)):
+                rep.error(where, "pose_dockq differs from minimum arm sc_dockq {:.6f}"
+                          .format(expected_pose))
+            threshold = schema.get("pose_dockq_threshold")
+            if isinstance(threshold, (int, float)):
+                expected_pass = expected_pose >= threshold
+                if parse_bool(row.get("pose_PASS")) is not expected_pass:
+                    rep.error(where, "pose_PASS disagrees with frozen pose threshold")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--sheet", required=True, help="design sheet CSV")
     ap.add_argument("--schema", required=True, help="frozen sheet_schema.json")
+    ap.add_argument("--policy", required=True, help="frozen scoring_policy.yaml")
+    ap.add_argument("--normalization", required=True,
+                    help="full scored-pool means and standard deviations")
     args = ap.parse_args()
 
     with open(args.schema, encoding="utf-8") as fh:
         schema = json.load(fh)
     with open(args.sheet, newline="", encoding="utf-8-sig") as fh:
         rows = list(csv.DictReader(fh))
+    with open(args.policy, encoding="utf-8") as fh:
+        policy = yaml.safe_load(fh)
+    with open(args.normalization, encoding="utf-8") as fh:
+        normalization = json.load(fh)
 
     rep = Report()
     cols = expected_columns(schema)
@@ -355,6 +463,7 @@ def main():
         check_missing_metrics(rows, cols, schema, rep)
         check_uniqueness(rows, rep)
         check_per_target(rows, schema, rep)
+        check_scoring(rows, schema, policy, normalization, rep)
 
     print("checked {} row(s) from {}".format(len(rows), args.sheet))
     sys.exit(rep.emit())

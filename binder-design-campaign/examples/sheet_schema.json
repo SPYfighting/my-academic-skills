@@ -3,6 +3,7 @@
   "_comment": "Frozen at campaign kickoff. Edit ranking_arms, enums and thresholds to match the campaign, then do not change it again. scripts/check_design_sheet.py and scripts/check_diversity.py read this file.",
   "designs_per_target": 6,
   "final_seed_tier": 3,
+  "pose_dockq_threshold": 0.23,
   "ranking_arms": [
     "ef2full",
     "ef2fast",

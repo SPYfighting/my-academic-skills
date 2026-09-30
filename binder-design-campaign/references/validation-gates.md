@@ -1,13 +1,14 @@
 # G3: instrument validation
 
-The purpose of this gate is narrow and important: **prove, on this target, that
-the instrument you are about to rank thousands of designs with can tell a real
-binder from noise.** Nothing downstream recovers from failing to establish this.
+The purpose of this gate is narrow and important: test, on this target, whether
+the instrument can distinguish a known binder from negative controls. If no
+usable positive control exists, record the weaker fold-only evidence honestly;
+it does not establish binding discrimination.
 
-Production scoring on a target is blocked until
-`state/gates/<target>.json` exists with `status: PASS`. This is enforced in the
-submit path (`compute-backends.md` §4), not by convention. A verbal
-claim, a message, or an in-memory variable does not satisfy the gate.
+Target production is blocked until `state/gates/<target>.json` exists with
+`status: PASS` and the approved evidence level. `scripts/preflight.py` checks
+the recorded gate before a job starts; every submit path must also enforce the
+same rule (`compute-backends.md` §5). A verbal claim does not satisfy it.
 
 ---
 
@@ -68,11 +69,12 @@ separation value suggests.
 control-ligand chain, at the same seed count, chain construct and ipSAE pairing
 used for the designs.
 
-**No literature control exists.** After a documented, comprehensive search,
-condition (b) is dropped and the gate can PASS on (a). Record the search in the
-gate file and say so in plain language at G3 and in the report: the campaign is
-running without a demonstrated ability to distinguish binders from non-binders
-on this target.
+**No literature control exists.** After a documented search, set
+`evidence_level: FOLD_ONLY`; condition (b) is untested, not passed. The gate
+can be marked `PASS` for exploratory scoring only if the G0-approved plan
+explicitly permits fold-only evidence. Record the search and say plainly at
+G3 and in the report that the campaign has no demonstrated ability to separate
+binders from non-binders on this target.
 
 ---
 
@@ -82,6 +84,7 @@ on this target.
 {
   "target": "<name>",
   "status": "PASS",
+  "evidence_level": "CONTROL_SEPARATED",
   "frozen_at_utc": "<ISO-8601, from an executed clock call>",
   "construct": {
     "chains": ["A", "B"],
@@ -130,8 +133,8 @@ every score computed under the old values.
 
 ## 4. When (b) fails on every arm
 
-**Self-authorisation is barred.** Report the failure, present these three
-recovery options, and wait for the human:
+Try these three recovery options inside the approved resource envelope and
+record each outcome:
 
 1. Re-run the control with the **control-ligand MSA enabled** — the most common
    cause is a control run single-sequence when the arm has an MSA encoder.
@@ -141,8 +144,10 @@ recovery options, and wait for the human:
    validation-gate diagnostic only — it stays outside the production scoring
    and pose-check path.
 
-If none succeeds, the honest outcomes are: proceed with condition (b) dropped
-and say so everywhere; change the target construct; or stop. Present all three.
+If none succeeds, stop this target and present a revised plan. The options are
+to proceed under explicitly approved fold-only exploratory evidence, change the
+construct and re-open G1, or stop. A previously approved general execution
+range does not silently waive a failed positive-control condition.
 
 ---
 

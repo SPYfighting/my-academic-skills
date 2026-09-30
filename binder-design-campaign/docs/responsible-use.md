@@ -46,9 +46,9 @@ science and is in scope; the line is drawn at enhancement and at intended harm.
 
 - The scope boundary is stated in `SKILL.md` §2 rule 8, so it is in context at
   every invocation rather than in a file the agent might not read.
-- The gate model puts a human in front of the target list (G0), the target
-  dossier (G1) and the epitope (G2). A request that should not proceed reaches a
-  person before compute is spent.
+- G0 puts the target, purpose and authorized stage range in front of the user
+  before campaign execution. Later scientific checkpoints remain auditable;
+  the user can require a review stop or authorize in-scope agent decisions.
 - Every campaign leaves an auditable record: what was designed, against what
   epitope, with which methods, by whose decision, with the deviations logged.
 

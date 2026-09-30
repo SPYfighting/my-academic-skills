@@ -123,9 +123,17 @@ Tracked from the same forward pass, never used for ranking:
 ## 4. Combining terms
 
 The formula below is described here and **written** in
-`../templates/scoring_policy.yaml`, which is what the sheet writer and the
-checks read. Change it there; a change described in prose but not made in the
-policy file has not happened.
+`../templates/scoring_policy.yaml`, which the sheet checker reads and a
+campaign-specific writer must read. Change it there; a change described in
+prose but not made in the policy file has not happened.
+
+The final sheet check takes the frozen policy and a per-target
+`score_normalization.json` derived from the **full scored pool**. It recomputes
+`final_score` from raw terms and `rank_zscore` from the recorded pool mean and
+standard deviation for each term. A normalization calculated from the selected
+final sheet would change the ranking question and is invalid. Preserve the
+full-pool manifest and the script or query that produced these statistics;
+the sheet checker verifies arithmetic, not the origin of those statistics.
 
 With the default three-arm instrument, six raw terms per design: three
 `ipSAE_min` (one per arm, max over seeds) and three `sc_DockQ`.

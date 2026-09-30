@@ -78,8 +78,21 @@ Template shape:
 #SBATCH --requeue
 
 set -euo pipefail
-# 1. dead-man switch: refuse to start if the campaign is halted or stale
-python "$CAMPAIGN_ROOT/scripts/preflight.py" || exit 0
+# 1. dead-man switch: never treat stand-down as permission to work
+# PREFLIGHT_SCRIPT, CAMPAIGN_ROOT, STAGE and optional TARGET come from the
+# frozen submission configuration, not from a retyped per-job command.
+preflight_args=(--root "$CAMPAIGN_ROOT" --stage "$STAGE")
+if [[ -n "${TARGET:-}" ]]; then preflight_args+=(--target "$TARGET"); fi
+if python "$PREFLIGHT_SCRIPT" "${preflight_args[@]}"; then
+    :
+else
+    preflight_status=$?
+    if [[ "$preflight_status" -eq 10 ]]; then
+        echo "Campaign job stood down before model work" >&2
+        exit 0
+    fi
+    exit "$preflight_status"
+fi
 # 2. environment (module load / conda activate / apptainer exec)
 # 3. work
 # 4. mkdir -p out && cp -r <results> out/
@@ -173,13 +186,18 @@ is reported. It is not, on its own, a reason to add work.
 
 ## 5. The submit gate
 
-One function, called before every dispatch, on every backend. It refuses when
+One function, called before every dispatch, on every backend. The repository
+currently supplies `scripts/preflight.py` as an **in-job** guard; a production
+backend must implement and test the submit-time gate described here before
+dispatching paid or shared jobs. It refuses when
 any of these holds:
 
 | Condition | Reason token |
 |---|---|
 | the campaign is halted | `HALTED` |
+| `state/authorization.json` is missing or the stage exceeds its approved limit | `OUTSIDE_AUTHORIZATION` |
 | the target's `state/gates/<target>.json` is absent or not `PASS`, and `stage` is a scoring stage | `VALIDATION_GATE` |
+| a fold-only G3 gate is not explicitly allowed in the approved plan | `UNAPPROVED_FOLD_ONLY` |
 | the concurrency ceiling is zero, missing, or stale | `STALE_OR_MISSING_GOVERNOR` |
 | live jobs are at or above the ceiling minus a headroom margin | `AT_CEILING` (retry with jittered backoff) |
 | on metered backends, spend pace exceeds the band and the job is long | `OVER_PACE` |
@@ -188,6 +206,12 @@ any of these holds:
 
 **Fail-closed on every path.** A delayed dispatch costs seconds; an ungated
 dispatch storm can cost a quota or a budget irrecoverably.
+
+Run the in-job guard with explicit `--root`, `--stage` and, for a target
+production stage, `--target`. Exit 0 means proceed; exit 10 means stand down;
+exit 2 means configuration error. The submit-time gate also needs live-job,
+spend and backlog checks that the in-job guard alone cannot supply. Do not
+describe the four-verb interface or the Slurm sketch as a finished adapter.
 
 `GEN_BACKLOG_CAP` deserves its own note: **generation must not outrun
 scoring**, because a generated design that is never scored is wasted compute.

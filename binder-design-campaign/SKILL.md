@@ -1,8 +1,8 @@
 ---
 name: binder-design-campaign
 description: >-
-  Gated protein design campaign: each expert judgement is a checkpoint a human
-  signs off before compute is spent. Branches: de novo binder design (epitope
+  Plan and run a protein design campaign within a user-approved stage and
+  resource boundary. Branches: de novo binder design (epitope
   choice, generation, co-folding ensemble ranking, ranked order sheet);
   structure and complex prediction with calibrated confidence; protein
   engineering (stability, enzyme, interface). Fires on designing binders or
@@ -13,10 +13,11 @@ description: >-
 license: MIT
 ---
 
-# Gated protein design campaign
+# Protein design campaign
 
-Three branches, one core. Pick the branch at G0; the gates, evidence rules and
-deliverable discipline below hold for all three.
+Three branches, one core. First turn the user's goal into a reviewable campaign
+plan; after the user chooses how far to execute, the evidence rules and
+deliverable discipline below hold for all three branches.
 
 | Branch | Read | For |
 |---|---|---|
@@ -61,38 +62,59 @@ steps nobody is watching.
    of pathogen function, is out of scope: stop and say so. See
    `docs/responsible-use.md`.
 
-## Gates
+## Plan, authorization and checkpoints
 
-A gate is a hard stop. Present the material `checklists/gate-checklists.md`
-lists for it, in the format it lists, then wait. Read that file at the gate
-rather than reconstructing it from memory, and keep the presentation and the
-next action in separate messages.
+Read `references/campaign-planning.md` before G0. Research what can be found
+independently, then ask the user for the remaining outcome, constraint and
+resource boundaries in one concise round. Create `state/campaign_plan.md` from
+`templates/campaign_plan.md`. It states the stage sequence, evidence needed at
+each checkpoint, expected outputs, estimated compute, unresolved assumptions,
+and actions needing separate permission. **G0 is the one required review:** do
+not start execution until the user approves the plan and selects an
+`authorized_through_stage` from 0 to 10. A value of 0 means plan only; 10
+authorizes the in-silico campaign through delivery. Record that decision in
+`state/decisions.jsonl` and `state/authorization.json`.
 
-| Gate | Decides | Blocks |
+G1–G6 are scientific and artifact checkpoints. At each, read the corresponding
+section of `checklists/gate-checklists.md`, save its evidence and decision, and
+continue when the approved stage limit covers the next stage. The agent makes
+in-scope scientific choices from sourced evidence; the user may require a
+review stop at any checkpoint or override a choice. A checkpoint never serves
+as a request for an unqualified user to certify a protein-engineering claim.
+Stop and return a reviewable result when the approved stage limit is reached,
+when a material premise changes, or when an action needs resources or external
+permission outside the approved plan. Do not silently widen the scope.
+
+| Checkpoint | Records | Stage reached |
 |---|---|---|
-| G0 | targets, backend, scale, licence regime, deliverables | everything |
-| G1 | assay construct, reference structure, cofactors | epitope selection |
-| G2 | epitope and hotspot residues | any generation |
-| G3 | that the instrument separates binders from noise on this target | all production scoring |
-| G4 | compute allocation per target | the production waves |
-| G5 | the ranked set to be ordered | delivery |
-| G6 | acceptance, checked from artifacts | declaring completion |
+| G0 | user-approved plan, execution limit, resources and permissions | 0 |
+| G1 | assay construct, reference structure, cofactors | 2 |
+| G2 | epitope and hotspot residues | 3 |
+| G3 | scoring evidence level and frozen instrument | 4 |
+| G4 | compute allocation per target | 5 |
+| G5 | the ranked set proposed for testing | 9 |
+| G6 | acceptance checks against delivered artifacts | 10 |
 
 Two carry most of the risk:
 
 - **G2 decides most of the outcome.** Epitope choice dominates model choice.
-- **G3 is mechanical.** Until `state/gates/<target>.json` reads `status: PASS`,
-  the submit gate refuses every production scoring job. A stated belief that the
-  instrument works leaves it refusing.
+- **G3 is mechanical.** Production jobs require a validated gate file. A
+  fold-only gate is visibly weaker than positive-control separation and requires
+  explicit inclusion in the approved plan; `scripts/preflight.py` refuses it
+  otherwise. A stated belief that the instrument works is not evidence.
 
-Gates also fire **mid-run**, not only in sequence. Changing the assay
+Checkpoints also re-open **mid-run**. Changing the assay
 construct, a catalytic or otherwise load-bearing residue, the off-target
 definition, or the endpoint the campaign is aimed at changes the scientific
-question — so each returns to the gate that owns it for a fresh signature, and
-none of them is a deviation you log and continue past.
+question — so return to the checkpoint that owns it and obtain approval for
+the revised plan when the change affects the user's goal, resource ceiling,
+external actions or authorized stage limit.
 
-**Completion bar for the whole campaign: every gate passed, with the human's
-decision recorded in `state/decisions.jsonl`.**
+**Completion bar for an authorized segment:** every stage through its approved
+limit has saved artifacts and checks; G6 completion requires the full campaign
+artifacts. The user's G0 authorization and any later amendments are recorded in
+`state/decisions.jsonl`. Agent scientific decisions are recorded separately as
+agent decisions with their evidence.
 
 ## Between gates
 
@@ -114,7 +136,7 @@ You work on your own here, subject to five standing obligations.
 ## Campaign spine
 
 ```
-G0 scope -> setup + tool bring-up -> G1 dossier -> G2 epitope
+G0 approved plan -> setup + tool bring-up -> G1 dossier -> G2 epitope
    -> G3 instrument validation -> G4 scale -> generate & screen
    -> optimisation -> final-tier scoring -> G5 selection -> G6 delivery
 ```
@@ -141,7 +163,9 @@ that produced its numbers.
 
 | File | Read it |
 |---|---|
+| `references/campaign-planning.md` | before G0, and when the authorized stage or scope changes |
 | `checklists/gate-checklists.md` | at every gate — G0 also sets the scale preset |
+| `templates/campaign_plan.md` | write the staged plan for user review at G0 |
 | `references/target-dossier-guide.md` | building the dossier, before G1 |
 | `references/failure-modes.md` | before G2, before G5, and whenever a result looks too good |
 | `references/validation-gates.md` | at G3, or when a control fails |

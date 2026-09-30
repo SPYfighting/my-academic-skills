@@ -3,6 +3,26 @@
 All notable changes to this project are recorded here.
 Format follows Keep a Changelog; versioning is semantic.
 
+## [0.7.0] - 2026-09-30
+
+### Changed
+- Binder campaigns now begin with one reviewable staged plan. The user chooses
+  an execution limit from plan-only through computational delivery; later
+  scientific checkpoints are recorded and reviewed when requested or when the
+  approved boundary changes.
+- Bundled the unmodified Anthropic multi-target prompt as CC-BY-4.0 reference
+  material, separate from the active skill instructions.
+- `preflight.py` now distinguishes permission to proceed from a stand-down,
+  checks the authorized stage and target gate, and requires explicit stage and
+  target arguments for production jobs.
+- The design-sheet checker now recomputes `final_score` and `rank_zscore` from
+  frozen scoring terms and full-pool normalization statistics.
+
+### Validation
+- Extended the synthetic fixture and self-check to exercise authorized and
+  blocked execution paths, plus altered summary scores. No real-target
+  end-to-end campaign or experimental binder yield has been validated.
+
 ## [0.6.0] - 2026-09-28
 
 ### Added

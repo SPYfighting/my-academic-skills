@@ -14,13 +14,16 @@ design_sheet.csv          12 rows, 2 targets, schema-conforming; its
                           missing, which is the normal case
 sheet_schema.json         the frozen schema, with designs_per_target=6 and
                           final_seed_tier=3 so the fixture stays small
+scoring_policy.yaml       frozen synthetic scoring terms and weights
+score_normalization.json  synthetic full-pool means and standard deviations
 scoreboard.csv            derived from the sheet and the ledger
 wallclock_hours.json      scheduler accounting, which the sheet cannot supply
 ledger/demo-worker.jsonl  four job rows, one writer
 ledger/rejects/*.jsonl    five rejected designs, by gate and reason code
 state/governor.json       concurrency ceiling, read by preflight.py
+state/authorization.json  synthetic approval through stage 10
 state/heartbeat.json      orchestrator liveness, read by preflight.py
-state/gates/*.json        the G3 validation gate files, both PASS
+state/gates/*.json        synthetic G3 evidence files, both PASS
 ```
 
 ## Running against it
@@ -28,10 +31,11 @@ state/gates/*.json        the G3 validation gate files, both PASS
 From the repository root:
 
 ```bash
-python check.py
+python check.py binder-design-campaign
 ```
 
-That runs every script on this fixture, then on a corrupted copy of it, and
+That runs the validators and preflight on this fixture, then on a corrupted
+copy, and
 asserts that the validators reject the corrupted one and say why. A check that
 never fails is broken (`binder-design-campaign/references/failure-modes.md`
 §4), so both halves have to pass.
@@ -49,7 +53,9 @@ proceed path, which is why it does not mutate anything here.
 
 ## Building your own
 
-Copy `sheet_schema.json` as a starting point. Before the first production job,
+Copy `sheet_schema.json`, `scoring_policy.yaml` and the campaign plan template
+as starting points. The normalization file must be **computed from the full
+scored pool**, not copied from this synthetic fixture. Before the first production job,
 set `ranking_arms` to the arms validated at G3, set `designs_per_target` and
 `final_seed_tier` to the campaign's values, and replace the `structure_method`
 and `seq_method` enums with the roster's tokens. Then freeze it — the schema is

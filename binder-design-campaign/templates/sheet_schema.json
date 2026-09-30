@@ -4,6 +4,7 @@
 
   "designs_per_target": 30,
   "final_seed_tier": 5,
+  "pose_dockq_threshold": 0.23,
   "ranking_arms": ["ef2full", "ef2fast", "ptxv2"],
 
   "columns": [
