@@ -43,7 +43,7 @@ Discovery conventions checked on 2026-09-08: [Codex](https://developers.openai.c
 Dependencies belong to each skill, not to the collection as a whole.
 
 - `binder-design-campaign`: install its pinned Python validation dependency with `python -m pip install -r binder-design-campaign/requirements.txt`; its computational workflows require separately configured scientific tools and a validated compute backend.
-- `paper-anchor`: requires Python 3.8+ and its standard library. See [project setup](../paper-anchor/README.md#set-up-a-project) for the activation snippet and `PAPER.md` template. Git is required only for optional staged checks and hook installation.
+- `paper-anchor`: daily use needs only Markdown. Projects whose rules adopt it use the [workflow](../paper-anchor/SKILL.md) and [template](../paper-anchor/templates/PAPER.md) directly. The maintainer self-check uses the Python standard library.
 - `scientific-illustrator-local`: follow its [environment and native-application setup](../scientific-illustrator-local/references/installation-and-compatibility.md). It requires CPython 3.11-3.13 and declared Python packages; Illustrator is needed only for native drawing. The optional VTracer executable is installed separately.
 - `scientific-ppt-drawing`: follow its [setup and application control](../scientific-ppt-drawing/references/setup-and-app-control.md). It requires CPython 3.11-3.13 and its pinned Python packages; PowerPoint is needed for native visual and editability review. Windows PowerPoint has not been tested on hardware.
 

@@ -9,7 +9,7 @@
 | Skill | 用途 |
 |---|---|
 | [binder-design-campaign](binder-design-campaign/SKILL.md) | 先明确靶点与实验目标、形成分阶段计划，再按用户授权的阶段执行蛋白结合子设计、结构预测或蛋白工程 |
-| [paper-anchor](paper-anchor/SKILL.md) | 用 `PAPER.md` 将论文主张连到证据、可复核产出和科研交接，分别记录分析进度和证据判读 |
+| [paper-anchor](paper-anchor/SKILL.md) | 用 Markdown 将论文主张连到证据、可复核产出和下一步。项目规则采用后自动使用 |
 | [scientific-illustrator-local](scientific-illustrator-local/SKILL.md) | 将科研示意图重建为可编辑矢量图，保留真实文字，并在本地 Illustrator 中绘制 |
 | [scientific-ppt-drawing](scientific-ppt-drawing/SKILL.md) | 在 PowerPoint 中用原生图形和文字绘制可编辑的科研示意图 |
 

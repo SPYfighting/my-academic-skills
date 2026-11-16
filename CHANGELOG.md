@@ -3,6 +3,20 @@
 All notable changes to this project are recorded here.
 Format follows Keep a Changelog; versioning is semantic.
 
+## [0.9.0] - 2026-11-16
+
+### Changed
+
+- `paper-anchor` 0.4.0 uses a Markdown workflow. Projects whose rules adopt it
+  use it by default, creating `PAPER.md` when they first need to record the paper
+  design. Each claim carries its next scientific step.
+
+### Removed
+
+- Removed the separate activation snippet, initialization command, generated
+  dashboard, handoff section, installer, and Git hook. The offline Python
+  self-check remains for maintainers and validates the bundled fixtures.
+
 ## [0.8.0] - 2026-11-16
 
 ### Added

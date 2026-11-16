@@ -1,46 +1,24 @@
 ---
 name: paper-anchor
-description: "Organize paper-driven research around the thesis, claims, and evidence in PAPER.md. Load when project rules enable paper-anchor, the user names it, or the user asks to use a PAPER.md with its dashboard marker. Use for research design, analysis, exploration, evidence review, and research handoffs."
+description: "Organize research around a paper's claims and evidence. Use by default for paper-related work in projects whose rules adopt paper-anchor, or when the user asks to use it. Create or maintain PAPER.md when the project's paper design needs a durable record."
 license: MIT
 metadata:
-  version: "0.3.1"
+  version: "0.4.0"
 ---
 
 # Paper Anchor
 
-`PAPER.md` holds the current paper design and evidence index. The thesis defines the research question, results `R1` and onward state the claims to test, and evidence IDs such as `R1.E1` connect those claims to reviewable work. Keep detailed methods, data, and run records at their existing locations and link to them.
+## Open the paper record
 
-## Start work
+Use this workflow for paper-related work when project rules adopt paper-anchor or the user requests it. In an adopting project it is the default. Read the relevant claims in the root `PAPER.md` if it exists. When the project first needs its paper design recorded, create `PAPER.md` directly from [the Markdown template](templates/PAPER.md). Start from available plans and evidence, mark proposed wording as a draft, and leave unknowns explicit. Read-only work uses any existing record as context and reports findings in the requested deliverable.
 
-1. Read the dashboard, research handoff, and relevant claims. Follow links to the underlying task, run, or artifact as needed. If `PAPER.md` is missing, continue independent authorized work. When the user requests initialization, run `python <checker> PAPER.md --init` and use the research question they provide.
-2. State the main claim or evidence ID, the question, and the expected output. For a read-only review, trace the claim to original artifacts and report findings in the requested deliverable.
-3. Continue the existing evidence item when it covers the task. Add an item under a confirmed claim when an authorized control, replication, or analysis is needed. Before formal analysis, record what would support or weaken the claim, including the relevant metrics and controls. Link the full design from the task or methods record.
-4. Authorized literature checks, quality control, and small pilots can proceed before an evidence ID exists. State the specific uncertainty and record findings in the research, task, or run record. Link reviewable findings to an existing item or propose a change. Ask the researcher to decide when scope, risk, resources, or authority materially change, and continue independent authorized work.
+Update existing records in place. Keep their evidence IDs, source links, and recorded decisions. The [fictional example](examples/PAPER.example.md) shows how to link results to claims.
 
-## Research decisions
+## Plan and carry out research
 
-The researcher confirms the thesis, creation or removal of claims, claim titles and wording, final verdicts, proposal acceptance, and closure of open questions. Offer concrete proposals with evidence IDs. Record explicit user instructions when implementing a decision.
+1. Identify the paper question and relevant claim or evidence gap. Use stable IDs such as `R1` for claims and `R1.E1` for evidence. An authorized exploration can start with a specific uncertainty and acquire an evidence ID later.
+2. For formal work, record the comparison, readout, controls, and what would support or weaken the claim. Keep methods, execution plans, data, logs, and full results in project records and link to them.
+3. Update the relevant evidence row with analysis status, interpretation, a short result, and a reviewable artifact link. A completed negative analysis is still complete. Use inconclusive when valid evidence leaves the claim unresolved. Record technical failure as an analysis status, with the reason and the associated diagnostic record when available.
+4. Update the claim's next scientific step. Record a proposed change with its evidence and rationale under Decisions when researcher input is needed. Verify updated IDs and links before finishing.
 
-Maintain evidence items, output links, and next steps within the authorized scope. A planned result can move into progress as work starts. When setting evidence aside, keep its ID and record the reason. Use the paper handoff for the next scientific step and any separate project handoff for active jobs, permissions, blockers, and recovery.
-
-## Record evidence
-
-Use the six columns in [the template](templates/PAPER.md), in order: evidence ID, planned work, analysis status, evidential interpretation, one-line result, and artifacts. The bundled template uses Chinese field labels. Keep the labels and status vocabulary used by the template.
-
-| Field | How to fill it |
-|---|---|
-| Analysis status | Use the template's planned, in progress, blocked, completed, technical failure, or set-aside status. |
-| Evidential interpretation | For completed work, use 支持 (supports), 部分支持 (partly supports), 不支持 (does not support), 无法判定 (inconclusive), or 未判读 (awaiting interpretation). For other statuses, use `—`. |
-| Result | Summarize the comparison, observed effect, and essential conditions. Explain blockers, technical failures, and set-aside items. Record the recovery point when work is incomplete. |
-| Artifact | Link every completed result to a reviewable file or external source. Prefer local paths relative to `PAPER.md`. Link inputs, versions, reproduction steps, and full results from the artifact. Verify external references separately. |
-
-A valid negative result is a completed analysis with an interpretation of 不支持. Use 部分支持 when the result supports only part of the claim, and 无法判定 when valid outputs leave the claim unresolved. Use the technical failure status when execution or quality control invalidates the analysis and keep its diagnostic record. The dashboard measures progress. The final verdict depends on the scope, strength, and consistency of the evidence.
-
-## Update and hand off
-
-1. For material research changes, update the affected items, artifact links, and next steps. Record proposals or open questions that require a researcher decision.
-2. Update the research handoff and append a dated changelog entry with the actor, affected IDs, change, and reason. For parallel work, assign one person or agent to merge updates into the current copy of `PAPER.md`.
-3. Run `python <checker> PAPER.md --fix-dashboard`, resolve errors introduced by the change, and report meaningful warnings. If the checker is unavailable and a handoff is necessary, sync the dashboard manually and mark it as pending verification.
-4. Report evidence produced, progress, unfinished items, and decisions. Keep read-only reviews and unrelated maintenance in their own deliverables.
-
-`<checker>` is [`scripts/check_paper.py`](scripts/check_paper.py) relative to this skill directory. See the [usage guide](README.md) for project setup, legacy files, and automated checks.
+The researcher confirms the thesis, claim changes, and final verdicts. The agent can draft proposals and maintain evidence within the authorized scope.
