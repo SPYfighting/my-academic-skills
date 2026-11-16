@@ -1,0 +1,19 @@
+#!/bin/sh
+# Validate the staged PAPER.md when the optional hook is installed.
+STAGED=$(git ls-files --stage -- PAPER.md) || {
+  echo "paper-anchor: could not read the Git index" >&2
+  exit 1
+}
+[ -n "$STAGED" ] || exit 0
+CHECK=""
+for base in .agents/skills .claude/skills .opencode/skills "$HOME/.agents/skills" "$HOME/.claude/skills"; do
+  candidate="$base/paper-anchor/scripts/check_paper.py"
+  [ -f "$candidate" ] && CHECK="$candidate" && break
+done
+[ -n "$CHECK" ] || { echo "paper-anchor: checker unavailable; skipped" >&2; exit 0; }
+PY=$(command -v python3 || command -v python)
+[ -n "$PY" ] || { echo "paper-anchor: Python unavailable; skipped" >&2; exit 0; }
+"$PY" "$CHECK" PAPER.md --staged --quiet || {
+  echo "paper-anchor: staged PAPER.md failed validation. Fix and stage the file before committing." >&2
+  exit 1
+}

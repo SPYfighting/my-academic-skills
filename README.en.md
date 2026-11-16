@@ -1,6 +1,6 @@
 # My Academic Skills
 
-Research skills for Claude Code, Codex, and OpenCode. Each top-level skill directory is maintained independently; its `SKILL.md` describes the workflow, dependencies, and validation limits.
+Research skills for Claude Code, Codex, and OpenCode, covering paper and evidence planning, computational protein design, and editable scientific figures. Each top-level skill directory is maintained independently. Its `SKILL.md` describes the workflow, dependencies, and validation limits.
 
 [中文](README.md) · [Installation](docs/installation.md) · [Repository conventions](AGENTS.md)
 
@@ -9,6 +9,7 @@ Research skills for Claude Code, Codex, and OpenCode. Each top-level skill direc
 | Skill | Purpose |
 |---|---|
 | [binder-design-campaign](binder-design-campaign/SKILL.md) | Plan protein binder design, structure prediction, or protein engineering with a user-approved execution limit and optional review checkpoints |
+| [paper-anchor](paper-anchor/SKILL.md) | Link paper claims to evidence, reviewable artifacts, and research handoffs in `PAPER.md`, with separate records for analysis progress and interpretation |
 | [scientific-illustrator-local](scientific-illustrator-local/SKILL.md) | Rebuild scientific diagrams as editable vectors with live text and draw them in local Illustrator |
 | [scientific-ppt-drawing](scientific-ppt-drawing/SKILL.md) | Draw editable scientific figures with native PowerPoint shapes and live text |
 

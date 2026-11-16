@@ -3,6 +3,17 @@
 All notable changes to this project are recorded here.
 Format follows Keep a Changelog; versioning is semantic.
 
+## [0.8.0] - 2026-11-16
+
+### Added
+
+- `paper-anchor` 0.3.1: organize paper claims, evidence, reviewable artifacts,
+  and research handoffs in `PAPER.md`. Includes a template, a fictional example,
+  a standard-library checker, and an optional staged-file Git hook.
+- Offline self-checks for legacy tables, artifact paths, dashboard updates,
+  and malformed evidence. Scientific interpretation, external sources, and
+  native agent discovery require separate validation.
+
 ## [0.7.0] - 2026-09-30
 
 ### Changed

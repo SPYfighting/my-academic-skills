@@ -10,12 +10,12 @@ message: >-
 type: software
 abstract: >-
   Self-contained research skills for coding agents, covering computational
-  protein design, editable scientific illustrations, and native PowerPoint
-  scientific figures. Each skill includes
+  protein design, paper planning and evidence tracking, editable scientific
+  illustrations, and native PowerPoint scientific figures. Each skill includes
   its own workflow, dependencies, attribution, and validation scope.
 license: MIT
-version: 0.7.0
-date-released: '2026-09-30'
+version: 0.8.0
+date-released: '2026-11-16'
 keywords:
   - protein design
   - binder design
@@ -23,6 +23,7 @@ keywords:
   - structure prediction
   - agent skill
   - reproducibility
+  - evidence tracking
   - scientific illustration
   - PowerPoint drawing
 references:
