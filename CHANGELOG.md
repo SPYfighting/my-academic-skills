@@ -3,6 +3,14 @@
 All notable changes to this project are recorded here.
 Format follows Keep a Changelog; versioning is semantic.
 
+## [0.9.2] - 2026-11-16
+
+### Changed
+
+- `paper-anchor` 0.4.2 clarifies evidence completion across tasks, how to
+  reconcile conflicting records, when to reuse an evidence ID for a rerun,
+  who writes back during parallel work, and when to update a local skill copy.
+
 ## [0.9.1] - 2026-11-16
 
 ### Changed
