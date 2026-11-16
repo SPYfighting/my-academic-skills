@@ -11,6 +11,7 @@ CLAIM = re.compile(r"^### (R[1-9][0-9]*)\b")
 EVIDENCE = re.compile(r"(R[1-9][0-9]*)\.E[1-9][0-9]*")
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 COMPLETED = "完成"
+IN_PROGRESS = "进行中"
 BLANK = "—"
 NON_SUPPORTING = "不支持"
 
@@ -40,11 +41,16 @@ def fixture_errors(text, directory):
         evidence.add(evidence_id)
         if not work or not status:
             errors.append("missing planned work or analysis status")
+        artifact_links = LINK.findall(artifact)
+        for link_type, links in (("task", LINK.findall(work)), ("artifact", artifact_links)):
+            for link in links:
+                path = Path(link.split("#", 1)[0])
+                if path.is_absolute() or ".." in path.parts or not (directory / path).is_file():
+                    errors.append(f"missing or invalid {link_type} link")
         if status == COMPLETED:
             if interpretation in ("", BLANK) or result in ("", BLANK):
                 errors.append("completed analysis lacks interpretation or result")
-            link = LINK.fullmatch(artifact)
-            if not link or not (directory / link[1]).is_file():
+            if not artifact_links:
                 errors.append("completed analysis lacks a local fixture artifact")
         elif interpretation != BLANK:
             errors.append("unfinished analysis has a scientific interpretation")
@@ -73,6 +79,22 @@ def main():
 
     check("template evidence table", not fixture_errors(template_text, template.parent))
     check("example evidence tables and artifacts", not fixture_errors(example_text, example.parent))
+    active = next((line for line in example_text.splitlines()
+                   if line.startswith("| R") and f"| {IN_PROGRESS} |" in line), "")
+    cells = active.split("|")
+    task_links = LINK.findall(cells[2]) if len(cells) == 8 else []
+    artifact_links = LINK.findall(cells[6]) if len(cells) == 8 else []
+    task = next((link for link in task_links if link.startswith("tasks/")), None)
+    table = next((link for link in artifact_links if link.startswith("fig/")), None)
+    check("active evidence links its task, interim result, and table",
+          task and table and any(link.startswith("results/") for link in artifact_links))
+    if task:
+        invalid = example_text.replace(task, "tasks/nonexistent-fixture.md", 1)
+        check("missing active task rejected", "missing or invalid task link" in fixture_errors(invalid, example.parent))
+    if table:
+        invalid = example_text.replace(table, "fig/nonexistent-fixture.md", 1)
+        check("missing active table rejected",
+              "missing or invalid artifact link" in fixture_errors(invalid, example.parent))
     negative = f"| {COMPLETED} | {NON_SUPPORTING} |"
     row = next((line for line in example_text.splitlines()
                 if line.startswith("| R") and negative in line), None)
@@ -85,7 +107,7 @@ def main():
         broken_row = LINK.sub("[missing](results/nonexistent-fixture.md)", row)
         invalid = example_text.replace(row, broken_row, 1)
         check("missing result file rejected",
-              "completed analysis lacks a local fixture artifact" in fixture_errors(invalid, example.parent))
+              "missing or invalid artifact link" in fixture_errors(invalid, example.parent))
         duplicate = example_text.replace(row, row + "\n" + row, 1)
         check("duplicate evidence ID rejected", "duplicate evidence ID" in fixture_errors(duplicate, example.parent))
     if not failures:

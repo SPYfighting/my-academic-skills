@@ -3,6 +3,15 @@
 All notable changes to this project are recorded here.
 Format follows Keep a Changelog; versioning is semantic.
 
+## [0.9.1] - 2026-11-16
+
+### Changed
+
+- `paper-anchor` 0.4.1 uses `PAPER.md` as the project overview. Evidence
+  rows link to their tasks, available interim or final results, and figures
+  or tables. Refresh the links and next steps when status, results, or paths
+  change. The example and offline self-check cover an in-progress analysis.
+
 ## [0.9.0] - 2026-11-16
 
 ### Changed
