@@ -1,6 +1,6 @@
 # My Academic Skills
 
-适用于 Claude Code、Codex 和 OpenCode 的科研技能集合，涵盖论文与证据规划、蛋白设计和可编辑科研绘图。每个一级技能目录独立维护，具体流程、依赖和验证范围见各自的 `SKILL.md`。
+适用于 Claude Code、Codex 和 OpenCode 的科研技能集合，涵盖论文与证据规划、蛋白设计、无缝克隆引物设计和可编辑科研绘图。每个一级技能目录独立维护，具体流程、依赖和验证范围见各自的 `SKILL.md`。
 
 [English](README.en.md) · [安装](#安装) · [维护约定](AGENTS.md)
 
@@ -12,6 +12,7 @@
 | [paper-anchor](paper-anchor/SKILL.md) | 用 `PAPER.md` 总览论文设计和证据，链接进行中的任务、已有结果和图表。项目规则采用后自动使用 |
 | [scientific-illustrator-local](scientific-illustrator-local/SKILL.md) | 将科研示意图重建为可编辑矢量图，保留真实文字，并在本地 Illustrator 中绘制 |
 | [scientific-ppt-drawing](scientific-ppt-drawing/SKILL.md) | 在 PowerPoint 中用原生图形和文字绘制可编辑的科研示意图 |
+| [seamless-mutagenesis-primers](seamless-mutagenesis-primers/SKILL.md) | 按指定 DNA 模板和突变清单设计无缝克隆引物，核对位点和模拟产物，可选输出带引物的图谱副本和 Excel 订购表 |
 
 ## 安装
 
@@ -36,6 +37,7 @@ OpenCode 也会发现项目内的 `.agents/skills/` 和 `.claude/skills/`。同�
 - **paper-anchor**：日常只用 Markdown，维护者自检使用 Python 标准库。见 [使用说明](paper-anchor/README.md)。
 - **scientific-illustrator-local**：按 [环境与兼容性说明](scientific-illustrator-local/references/installation-and-compatibility.md) 准备 CPython 3.11–3.13 和声明的依赖。原生绘图使用 Illustrator，VTracer 可选。
 - **scientific-ppt-drawing**：按 [环境与应用控制说明](scientific-ppt-drawing/references/setup-and-app-control.md) 准备 CPython 3.11–3.13 和固定版本依赖。原生渲染和编辑的验收需要 PowerPoint。
+- **seamless-mutagenesis-primers**：引物设计使用 Biopython，Excel 订购表使用 openpyxl。版本见[依赖清单](seamless-mutagenesis-primers/requirements.txt)。
 
 ## 自检与维护
 

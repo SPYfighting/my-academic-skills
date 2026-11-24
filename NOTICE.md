@@ -8,5 +8,6 @@ Original repository material is MIT-licensed under [LICENSE](LICENSE). Third-par
 | paper-anchor | [Detailed notice](paper-anchor/NOTICE.md): original MIT-licensed skill with fictional example data |
 | scientific-illustrator-local | [Detailed notice](scientific-illustrator-local/NOTICE.md): MIT adaptation of Cell-lct and separately installed local dependencies |
 | scientific-ppt-drawing | [Detailed notice](scientific-ppt-drawing/NOTICE.md): MIT adaptation of scientific-illustrator-local parsing modules and separately installed Python dependencies |
+| seamless-mutagenesis-primers | [Detailed notice](seamless-mutagenesis-primers/NOTICE.md) for original MIT-licensed scripts, generated fixtures and separately installed dependencies |
 
 Each skill carries its required notices and license. This repository is independent of the upstream projects and does not imply their endorsement.

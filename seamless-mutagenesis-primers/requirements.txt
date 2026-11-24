@@ -1,0 +1,2 @@
+biopython==1.87
+openpyxl==3.1.5

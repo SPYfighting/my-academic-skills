@@ -1,0 +1,3 @@
+# Attribution
+
+The skill instructions, helpers and generated test fixtures are original material under the [MIT license](LICENSE). Biopython and openpyxl are separate dependencies. For the sequence, coordinate and thermodynamic conventions see the Biopython documentation for [sequence features](https://biopython.org/docs/latest/api/Bio.SeqFeature.html), [SnapGene input](https://biopython.org/docs/latest/api/Bio.SeqIO.SnapGeneIO.html) and [nearest-neighbor melting temperatures](https://biopython.org/docs/latest/api/Bio.SeqUtils.MeltingTemp.html). No vendor form or codon-frequency dataset is bundled.

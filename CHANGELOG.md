@@ -3,6 +3,13 @@
 All notable changes to this project are recorded here.
 Format follows Keep a Changelog; versioning is semantic.
 
+## [0.10.0] - 2026-11-24
+
+### Added
+
+- Added `seamless-mutagenesis-primers` for independently specified plasmid substitutions, circular-product verification, annotated template copies, and optional Excel order sheets.
+- Added offline tests using generated fixtures for native and GenBank map copies, reverse-strand coordinates, coding phase, origin crossing and oligo export.
+
 ## [0.9.2] - 2026-11-16
 
 ### Changed
