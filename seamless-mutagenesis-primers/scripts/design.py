@@ -1,10 +1,9 @@
-"""Design outward-facing primers for independent codon substitutions."""
+"""Design and verify mutagenesis, PCR or Sanger primers on a circular plasmid."""
 
 import argparse
 import csv
 import json
-import re
-from itertools import pairwise, product
+from itertools import groupby, pairwise
 from math import isfinite
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -12,21 +11,21 @@ from tempfile import TemporaryDirectory
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqFeature import ExactPosition
-from Bio.SeqUtils.MeltingTemp import Tm_NN
 from maps import write_map
-
-AMINO = "ACDEFGHIKLMNPQRSTVWY"
-
-
-def rc(sequence):
-    return str(Seq(sequence).reverse_complement())
+from mutagenesis import construct, rc
 
 
-def read_target(path, label, genetic_code):
+def read_map(path):
     fmt = "snapgene" if path.suffix.lower() == ".dna" else "genbank"
     record = SeqIO.read(path, fmt)
-    if record.annotations.get("topology") != "circular":
-        raise ValueError("A confirmed circular template is required")
+    if record.annotations.get("topology") != "circular" or set(str(record.seq).upper()) - set(
+        "ACGT"
+    ):
+        raise ValueError("A circular plasmid with resolved A/C/G/T sequence is required")
+    return record
+
+
+def read_target(record, label, genetic_code):
     hits = [
         f
         for f in record.features
@@ -76,92 +75,7 @@ def read_target(path, label, genetic_code):
             raise ValueError(
                 "CDS translation disagrees with annotation; resolve numbering or initiation"
             )
-    return record, rotated, indexes[0], strand, code, protein
-
-
-def pair(template, start, strand, code, protein, request, args):
-    variant = request["variant"]
-    match = re.fullmatch(f"([{AMINO}])([1-9][0-9]*)([{AMINO}])", variant)
-    if not match:
-        raise ValueError(f"Invalid substitution: {variant!r}")
-    wt, number, alt = match.groups()
-    k = int(number) - 1
-    if wt == alt or k >= len(protein) or protein[k] != wt:
-        raise ValueError(f"{variant}: wild type or CDS position mismatch")
-    expected = protein[:k] + alt + protein[k + 1 :]
-    if "protein" in request and request["protein"].rstrip("*") != expected.rstrip("*"):
-        raise ValueError(f"{variant}: supplied mutant protein differs")
-    name = request.get("name", variant)
-    if not isinstance(name, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", name):
-        raise ValueError(f"{variant}: use a plain oligo name starting with a letter or digit")
-    source_id = str(request.get("source_id", ""))
-    if source_id.lstrip().startswith(("=", "+", "-", "@")):
-        source_id = "'" + source_id
-    codon = request["codon"].upper()
-    if not re.fullmatch("[ACGT]{3}", codon) or str(Seq(codon).translate(table=code)) != alt:
-        raise ValueError(f"{variant}: target codon does not encode requested residue")
-    size = len(template)
-    i = 3 * k
-    circle = template[i:] + template[:i]
-    up = (args.overlap - 3) // 2
-    down = args.overlap - 3 - up
-    arm = circle[-up:] + codon + circle[3 : 3 + down]
-
-    def coord(offset):
-        return (start + strand * (i + offset)) % size
-
-    def candidates(reverse):
-        for length in range(args.flank, args.max_flank + 1):
-            tail = rc(circle[-length:]) if reverse else circle[3 : 3 + length]
-            orientations = (tail, rc(tail))
-            expanded = circle + circle[: length - 1]
-            if sum(len(list(re.finditer(f"(?={word})", expanded))) for word in orientations) != 1:
-                continue
-            tm = Tm_NN(tail, dnac1=args.primer_nm, dnac2=0, Na=args.na, Mg=args.mg, dNTPs=args.dntp)
-            if tm >= args.min_tm:
-                yield length, tail, tm
-
-    viable = []
-    for f, r in product(candidates(False), candidates(True)):
-        delta = abs(f[2] - r[2])
-        if delta <= args.max_delta:
-            viable.append((f[0] + r[0], delta, f, r))
-    if not viable:
-        raise ValueError(f"{variant}: no unique paired flanks meet length and Tm constraints")
-    _, _, f, r = min(viable)
-    fseq = circle[-up:] + codon + f[1]
-    rseq = rc(circle[3 : 3 + down]) + rc(codon) + r[1]
-    amplicon = fseq + circle[3 + f[0] : size - r[0]] + rc(rseq)
-    if (
-        fseq[: args.overlap] != arm
-        or rc(rseq[: args.overlap]) != arm
-        or amplicon[: -args.overlap] != circle[-up:] + codon + circle[3 : size - up]
-    ):
-        raise ValueError(f"{variant}: circular assembly failed")
-    rows = []
-    for direction, oligo, flank, a, b, sense in (
-        ("F", fseq, f, 3, 2 + f[0], strand),
-        ("R", rseq, r, -1, -r[0], -strand),
-    ):
-        rows.append(
-            {
-                "variant": variant,
-                "source_id": source_id,
-                "name": f"{name}-{direction}",
-                "sequence": oligo,
-                "wt_codon": circle[:3],
-                "target_codon": codon,
-                "codon_first_bp": coord(0) + 1,
-                "cds_strand": strand,
-                "overlap_bp": args.overlap,
-                "flank_bp": flank[0],
-                "flank_tm_c": round(flank[2], 2),
-                "tail_first_bp": coord(a) + 1,
-                "tail_last_bp": coord(b) + 1,
-                "primer_strand": sense,
-            }
-        )
-    return rows
+    return rotated, indexes[0], strand, code, protein
 
 
 def outputs(folder, rows, args, record):
@@ -169,6 +83,35 @@ def outputs(folder, rows, args, record):
         writer = csv.DictWriter(handle, fieldnames=rows[0])
         writer.writeheader()
         writer.writerows(rows)
+    if args.mode == "mutagenesis" and any(row["pcr"] > 1 for row in rows):
+        with (folder / "fragments.csv").open("w", encoding="utf-8-sig", newline="") as handle:
+            writer = csv.writer(handle)
+            writer.writerow(
+                [
+                    "construct",
+                    "pcr",
+                    "forward_primer",
+                    "reverse_primer",
+                    "product_bp",
+                    "start_junction",
+                    "end_junction",
+                    "pair_delta_tm_c",
+                ]
+            )
+            for _, reaction in groupby(rows, key=lambda r: (r["construct"], r["pcr"])):
+                forward, reverse = reaction
+                writer.writerow(
+                    [
+                        forward["construct"],
+                        forward["pcr"],
+                        forward["name"],
+                        reverse["name"],
+                        forward["product_bp"],
+                        forward["junction"],
+                        reverse["junction"],
+                        round(abs(forward["flank_tm_c"] - reverse["flank_tm_c"]), 2),
+                    ]
+                )
     if args.order:
         from openpyxl import Workbook, load_workbook
 
@@ -194,24 +137,42 @@ def outputs(folder, rows, args, record):
 
 
 def run(args):
-    record, template, first, strand, code, protein = read_target(
-        args.template, args.cds, args.genetic_code
-    )
-    if not (
-        5 <= args.overlap
-        and (args.overlap - 2) // 2 < args.flank <= args.max_flank
-        and 2 * args.max_flank + 3 < len(template)
-    ):
-        raise ValueError("Incompatible overlap, flank lengths, or template length")
+    record = read_map(args.template)
     conditions = [args.min_tm, args.max_delta, args.primer_nm, args.na, args.mg, args.dntp]
     if not all(map(isfinite, conditions)) or min(conditions[1:]) < 0 or args.primer_nm == 0:
         raise ValueError("Invalid Tm or concentration settings")
     items = json.loads(args.requests.read_text(encoding="utf-8-sig"))
-    if not isinstance(items, list) or not items or len({r["variant"] for r in items}) != len(items):
-        raise ValueError("Supply a nonempty list of distinct variants")
-    rows = [
-        row for item in items for row in pair(template, first, strand, code, protein, item, args)
-    ]
+    if not isinstance(items, list) or not items or not all(isinstance(i, dict) for i in items):
+        raise ValueError("Supply a nonempty list of requests")
+    if args.mode == "mutagenesis":
+        if (
+            not args.cds
+            or not 1 <= args.flank <= args.max_flank
+            or (args.min_fragment is not None and args.min_fragment < 1)
+        ):
+            raise ValueError("Select a CDS and valid length ranges")
+        template, first, strand, code, protein = read_target(record, args.cds, args.genetic_code)
+        if args.max_flank >= len(template) or (
+            args.arm_min_tm is not None and not isfinite(args.arm_min_tm)
+        ):
+            raise ValueError("Invalid flank length or overlap Tm threshold")
+        names = [str(i.get("name", i.get("variant", ""))).casefold() for i in items]
+        if len(set(names)) != len(names):
+            raise ValueError("Construct names must be distinct")
+        rows = [
+            row
+            for item in items
+            for row in construct(template, first, strand, code, protein, item, args)
+        ]
+    else:
+        from target_primers import choose
+
+        if (
+            not 1 <= args.primer_min_len <= args.primer_opt_len <= args.primer_max_len
+            or not args.min_tm <= args.opt_tm <= args.max_tm
+        ):
+            raise ValueError("Invalid primer length or Tm range")
+        rows = [row for item in items for row in choose(str(record.seq).upper(), item, args)]
     if len({r["name"].casefold() for r in rows}) != len(rows):
         raise ValueError("Oligo names must be distinct")
     if args.out.exists():
@@ -228,11 +189,23 @@ def cli():
     p.add_argument("template", type=Path)
     p.add_argument("requests", type=Path)
     p.add_argument("out", type=Path, help="New output directory")
-    p.add_argument("--cds", required=True)
+    p.add_argument("--mode", choices=("mutagenesis", "pcr", "sanger"), default="mutagenesis")
+    p.add_argument("--cds")
+    p.add_argument("--chemistry", choices=("generic", "nebuilder"), default="generic")
+    p.add_argument("--max-overlap", type=int, help="Largest permitted junction length, in bp")
+    p.add_argument(
+        "--arm-min-tm", type=float, help="Minimum 2/4-rule overlap temperature, in degrees C"
+    )
+    p.add_argument("--min-fragment", type=int)
+    p.add_argument("--primer-min-len", type=int, default=18)
+    p.add_argument("--primer-opt-len", type=int, default=20)
+    p.add_argument("--primer-max-len", type=int, default=25)
+    p.add_argument("--opt-tm", type=float, default=60)
+    p.add_argument("--max-tm", type=float, default=65)
     p.add_argument("--genetic-code", type=int)
     p.add_argument("--order", action="store_true", help="Write generic XLSX oligo order sheet")
     p.add_argument("--map", choices=("append", "replace"), help="Write an annotated copy")
-    for name, default in (("overlap", 16), ("flank", 20), ("max-flank", 24)):
+    for name, default in (("overlap", None), ("flank", 20), ("max-flank", 24)):
         p.add_argument("--" + name, type=int, default=default)
     for name, default in (
         ("min-tm", 55),

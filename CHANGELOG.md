@@ -3,6 +3,13 @@
 All notable changes to this project are recorded here.
 Format follows Keep a Changelog; versioning is semantic.
 
+## [0.11.0] - 2026-11-25
+
+### Added
+
+- Extended the existing plasmid primer skill with combined multi-site mutagenesis, neighboring edits on a shared junction, per-fragment PCR pairing and whole-circle verification.
+- Added configurable overlap position, length and chemistry screening, plus Primer3 presets for target-spanning PCR and directional Sanger verification. The existing skill name, independent-substitution input and CLI remain available.
+
 ## [0.10.0] - 2026-11-24
 
 ### Added

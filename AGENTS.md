@@ -10,7 +10,7 @@ This file governs changes to the repository. To use a skill, read its own `SKILL
 | Paper-driven research planning, tracking evidence, or navigating active research tasks and results | `paper-anchor/SKILL.md` |
 | Editable scientific diagrams, raster reconstruction, or local Illustrator drawing | `scientific-illustrator-local/SKILL.md` |
 | Editable scientific figures drawn in PowerPoint or PPTX | `scientific-ppt-drawing/SKILL.md` |
-| Plasmid single-substitution primer design for seamless cloning or oligo order sheets for those designs | `seamless-mutagenesis-primers/SKILL.md` |
+| Primer design on plasmid maps for single or combined mutagenesis, target-spanning PCR or Sanger verification | `seamless-mutagenesis-primers/SKILL.md` |
 
 ## Layout and writing
 

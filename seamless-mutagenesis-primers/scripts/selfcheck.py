@@ -180,7 +180,10 @@ if __name__ == "__main__":
     parser.parse_args()
     with tempfile.TemporaryDirectory() as temp:
         selfcheck(Path(temp))
+        from check_presets import check
+
+        check(Path(temp), SCRIPT)
     print(
-        "PASS: synthetic native and GenBank maps, reverse/origin/frame mapping, ordering and invalid inputs"
+        "PASS: synthetic native and GenBank maps, reverse/origin/frame mapping, multi-junction assembly, overlap settings, PCR, Sanger, ordering and invalid inputs"
     )
     print("Untested: native GUI rendering, vendor import and experimental outcomes")

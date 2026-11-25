@@ -10,12 +10,12 @@ message: >-
 type: software
 abstract: >-
   Self-contained research skills for coding agents, covering computational
-  protein design, seamless-cloning primer design, paper planning and evidence tracking, editable scientific
+  protein design, plasmid primer design, paper planning and evidence tracking, editable scientific
   illustrations, and native PowerPoint scientific figures. Each skill includes
   its own workflow, dependencies, attribution, and validation scope.
 license: MIT
-version: 0.10.0
-date-released: '2026-11-24'
+version: 0.11.0
+date-released: '2026-11-25'
 keywords:
   - protein design
   - mutagenesis primers

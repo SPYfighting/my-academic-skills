@@ -1,3 +1,7 @@
 # Attribution
 
 The skill instructions, helpers and generated test fixtures are original material under the [MIT license](LICENSE). Biopython and openpyxl are separate dependencies. For the sequence, coordinate and thermodynamic conventions see the Biopython documentation for [sequence features](https://biopython.org/docs/latest/api/Bio.SeqFeature.html), [SnapGene input](https://biopython.org/docs/latest/api/Bio.SeqIO.SnapGeneIO.html) and [nearest-neighbor melting temperatures](https://biopython.org/docs/latest/api/Bio.SeqUtils.MeltingTemp.html). No vendor form or codon-frequency dataset is bundled.
+
+Primer3 and primer3-py are installed separately under their respective terms. PCR and Sanger presets use the [Primer3 manual](https://primer3.org/manual.html) and [primer3-py bindings](https://libnano.github.io/primer3-py/). Directional sequencing follows the [Sanger sequencing overview](https://www.thermofisher.com/us/en/home/life-science/sequencing/sequencing-learning-center/capillary-electrophoresis-information/how-conduct-fragment-analysis0.html).
+
+The optional assembly screen follows the [NEBuilder HiFi manual](https://www.neb.com/en/-/media/nebus/files/manuals/manuale2621_e5520.pdf). The topology of multi-fragment mutagenesis is described in the [NEB site-directed mutagenesis application note](https://www.neb.com/-/media/nebus/files/application-notes/appnote_improved_methods_for_sdm_using_nebuilder_hifi_dna_assembly_master_mix.pdf). The centered-overlap preset uses its own configurable primer placement.

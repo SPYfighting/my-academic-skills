@@ -80,7 +80,8 @@ def native_copy(source, rows, replace):
                 meltingTemperature=str(round(row["flank_tm_c"])),
                 **extra,
             )
-            ET.SubElement(site, "Component", bases=row["sequence"][:-n])
+            if len(row["sequence"]) > n:
+                ET.SubElement(site, "Component", bases=row["sequence"][:-n])
             ET.SubElement(site, "Component", bases=tail, hybridizedRange=coords)
     primer_root.set("nextValidID", str(next_id))
     if counts[5] == 0:

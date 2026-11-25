@@ -1,6 +1,6 @@
 # My Academic Skills
 
-Research skills for Claude Code, Codex, and OpenCode, covering paper and evidence planning, computational protein design, seamless-cloning primer design, and editable scientific figures. Each top-level skill directory is maintained independently. Its `SKILL.md` describes the workflow, dependencies, and validation limits.
+Research skills for Claude Code, Codex, and OpenCode, covering paper and evidence planning, computational protein design, plasmid primer design, and editable scientific figures. Each top-level skill directory is maintained independently. Its `SKILL.md` describes the workflow, dependencies, and validation limits.
 
 [中文](README.md) · [Installation](#installation) · [Repository conventions](AGENTS.md)
 
@@ -12,7 +12,7 @@ Research skills for Claude Code, Codex, and OpenCode, covering paper and evidenc
 | [paper-anchor](paper-anchor/SKILL.md) | Use `PAPER.md` to track paper claims and evidence, with links to active tasks, available results, and figures. Projects whose rules adopt it use it by default |
 | [scientific-illustrator-local](scientific-illustrator-local/SKILL.md) | Rebuild scientific diagrams as editable vectors with live text and draw them in local Illustrator |
 | [scientific-ppt-drawing](scientific-ppt-drawing/SKILL.md) | Draw editable scientific figures with native PowerPoint shapes and live text |
-| [seamless-mutagenesis-primers](seamless-mutagenesis-primers/SKILL.md) | Design seamless-cloning primers for independent plasmid substitutions, verify circular products, and optionally export a map copy and an Excel order sheet |
+| [seamless-mutagenesis-primers](seamless-mutagenesis-primers/SKILL.md) | Design single-site or combined mutagenesis, target-spanning PCR and Sanger primers on plasmid maps, with verified fragments and optional order sheets |
 
 ## Installation
 
@@ -37,7 +37,7 @@ OpenCode also discovers project-local `.agents/skills/` and `.claude/skills/`. U
 - **paper-anchor**. Daily use needs only Markdown. The maintainer self-check uses the Python standard library. See the [usage guide](paper-anchor/README.md).
 - **scientific-illustrator-local**. Follow the [environment and compatibility guide](scientific-illustrator-local/references/installation-and-compatibility.md) for CPython 3.11–3.13 and its declared packages. Native drawing uses Illustrator. VTracer is optional.
 - **scientific-ppt-drawing**. Follow the [setup and application control guide](scientific-ppt-drawing/references/setup-and-app-control.md) for CPython 3.11–3.13 and its pinned packages. Native rendering and editing checks require PowerPoint.
-- **seamless-mutagenesis-primers** uses Biopython for design and openpyxl for Excel order sheets. See its [pinned dependencies](seamless-mutagenesis-primers/requirements.txt).
+- **seamless-mutagenesis-primers** uses Biopython for mutagenesis, Primer3 for PCR and Sanger design, and openpyxl for Excel order sheets. See its [pinned dependencies](seamless-mutagenesis-primers/requirements.txt).
 
 ## Check and maintain
 
